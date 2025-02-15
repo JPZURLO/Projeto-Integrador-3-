@@ -1,0 +1,220 @@
+body{
+    margin: 0%;
+}
+
+/* Navegação- logo e opções */
+header {
+    display: flex; /* Ativa o Flexbox para o header */
+    justify-content: space-between; /* Distribui os itens ao longo do header */
+    align-items: center; /* Alinha os itens verticalmente ao centro */
+    padding-right: 10px;
+    background-color: black;
+}
+  
+/* PAINEL 1  */
+
+nav ul {
+    list-style: none; /* Remove os marcadores de lista */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Ativa o Flexbox para a lista de navegação */
+  }
+  
+  nav li {
+    margin-left: 30px; /* Adiciona espaçamento entre os itens da lista */
+    margin-right: 30px;
+  }
+  
+  nav a {
+    text-decoration: none; /* Remove o sublinhado dos links */
+    color: white;
+  }
+
+  .header {
+    height: 100px; /* Altura do seu header */
+    background-color: #f0f0f0; /* Cor de fundo do seu header */
+  }
+  
+  .container {
+    width: 100%;
+    height: 400px; /* Altura da sua div principal */
+    background-image: url("../assets/images/image1-container1.jpg"); /* URL da sua imagem de fundo */
+    background-size: cover; /* Ajusta a imagem para cobrir todo o container */
+    position: relative; /* Importante para posicionar o quadrado */
+  }
+  
+  .square {
+    width: 50%;
+    height: 90%; /* Opcional: altura igual à do container */
+    background-color: rgba(255, 255, 255, 0.5); /* Cor de fundo branca com 50% de opacidade */
+    position: absolute; /* Posiciona o quadrado dentro do container */
+    left: 0; /* Alinha o quadrado à esquerda */
+    display: flex; /* Centraliza o texto verticalmente */
+    align-items: center; /* Centraliza o texto verticalmente */
+    justify-content: center; /* Centraliza o texto horizontalmente */
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+  
+  .square p {
+    color: #333; /* Cor do texto */
+    font-size: 19px;
+    padding: 10px;
+    text-align: justify;
+}
+
+  
+
+/* PAINEL 2 */
+.new-container {
+    width: 100%;
+    display: flex; /* Alinha os elementos horizontalmente */
+    align-items: center; /* Alinha os elementos verticalmente */
+    background-color: black;
+  }
+  
+  .text-content {
+    flex: 1; /* Ocupa o espaço disponível */
+    color: white;
+  }
+  
+  .image-content img {
+    height: auto; /* Altura automática */
+    width: auto;
+  }
+
+  #container2{
+    margin: 0%;
+  }
+
+  #div2{
+    font-size: large;
+    margin-left: 18px;
+  }
+
+  h2{
+    font-size: 14px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    text-align: justify;
+    margin-left: 16px;
+    color: rgb(189, 189, 189);
+    margin-right: 70px;
+}
+
+/* Painel 3 */
+
+.container2 {
+    width: 100%;
+    height: 400px; /* Altura da sua div principal */
+    background-image: url("../assets/images/image3-\ container3.jpg"); /* URL da sua imagem de fundo */
+    background-size: cover; /* Ajusta a imagem para cobrir todo o container */
+    position: relative; /* Importante para posicionar o quadrado */
+  }
+    
+  .square2 {
+    width: 98%;
+    height: 70%; /* Opcional: altura igual à do container */
+    background-color: rgba(255, 255, 255, 0.5); /* Cor de fundo branca com 50% de opacidade */
+    position: absolute; /* Posiciona o quadrado dentro do container */
+    display: flex; /* Centraliza o texto verticalmente */
+    margin-left: 10px;
+    margin-top: 60px;
+    margin-right: 10px;
+    flex-direction: column; /* Define a direção dos itens como vertical */
+    align-items: flex-start; /* Alinha os itens à esquerda */
+    
+}
+
+#nossos-serviços {
+    font-size: 18px;
+    text-align: left;
+    width: 100%; /* Largura total para o título */
+    margin-top: 0%;
+    margin-bottom: 0%;
+    color: white;
+}
+
+.nossos-serviços {
+    list-style-type: disc;
+    padding-left: 20px; /* Espaço para as bolinhas */
+    margin-bottom: 10px; /* Espaço abaixo da lista */
+    width: 100%; /* Largura total para a lista */
+    box-sizing: border-box; /* Inclui padding e borda na largura total */
+
+    
+}
+
+.nossos-serviços li {
+    margin-bottom: 5px; /* Espaço entre os itens da lista */
+    box-sizing: border-box; /* Inclui padding e borda na largura total */
+
+}
+
+.nossos-serviços ul{
+    box-sizing: border-box; /* Inclui padding e borda na largura total */
+
+}
+
+.nossos-serviços .texto-sem-marcador {
+    max-width: 100%; /* Largura máxima igual à largura da div pai */
+    word-wrap: break-word; /* Quebra o texto em várias linhas, se necessário */
+}
+
+/* SEÇÂO 3*/
+.container3 {
+    display: flex; /* Alinha os elementos horizontalmente */
+    width: 100%;
+  }
+  
+  .logo2 {
+    width: 50%;
+    text-align: left; /* Alinha o logo à esquerda */
+    padding: 20px;
+  }
+  
+  .logo2 img {
+    max-width: 100%; /* Garante que o logo não ultrapasse a largura da div */
+    height: auto;
+  }
+  
+    .user-info {
+    align-items: center; /* Alinha os elementos verticalmente */
+  }
+  
+  .user-info a {
+    display: flex; /* Alinha os elementos (ícone e texto) horizontalmente */
+    text-decoration: none; /* Remove o sublinhado padrão do link */
+    color: inherit; /* Mantém a cor do texto do elemento pai */
+  }
+  
+  
+  .user-info a {
+    text-decoration: underline; /* Adiciona o sublinhado ao texto */
+    margin-left: 150px;
+    margin-top: 0%;
+  }
+
+  h2{
+    text-align: center;
+    margin: 0%;
+    margin-top: 40px;
+}
+
+/* SEÇÃO COPYRIGHT */
+footer {
+    background-color: #000000; /* Cor de fundo */
+    padding: 10px; /* Espaçamento interno */
+    text-align: center; /* Alinhamento do texto */
+  }
+  
+  footer .copy {
+    font-size: 14px; /* Tamanho da fonte */
+    color: white; /* Cor do texto */
+  }
+
+   p.copy {
+    margin: 0%;
+  }
+
+  
+  
