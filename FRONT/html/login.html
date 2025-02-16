@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="../css/styleLogin.css">
+</head>
+<body>
+    <div class="background">
+        <img src="../assets/images/obranoconcluida.jpg" alt="Fundo"> </div>
+    <div class="overlay">
+        <h1>Bem-vindo à Plataforma de Gestão de Obras Públicas</h1>
+        <p>Acompanhe o progresso e participe da transformação da sua cidade.</p>
+        <div class="login-box">
+            <img src="../assets/images/logo-user-tela_login.png" alt="Logo de Usuário">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Senha" required>
+                
+                <!-- Checkbox para mostrar senha -->
+                <div class="show-password">
+                    <input type="checkbox" id="showPassword">
+                    <label for="showPassword">Mostrar senha</label>
+                </div>
+                <button type="submit">Entrar</button>
+            </form>
+            <p class="signup-link">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+            <!-- Link de "Esqueci a senha" movido para baixo -->
+            <p><a href="#">Esqueceu a senha?</a></p>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
+</body>
+</html>
