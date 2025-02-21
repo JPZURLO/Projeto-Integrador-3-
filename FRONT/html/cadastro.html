@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
     <link rel="stylesheet" href="../css/styleCadastro.css">
 </head>
@@ -14,12 +16,12 @@
         <div class="login-box">
             <img src="../assets/images/logo-user-tela_login.png" alt="Logo de Usuário">
             <h2>Cadastro</h2>
-            <form id="registerForm">
-                <input type="text" id="fullName" placeholder="Nome Completo" required>
-                <input type="tel" id="phone" placeholder="Telefone" required>
-                <input type="email" id="email" placeholder="Email" required>
-                
-                <select id="userType" required>
+            <form action="https://formspree.io/f/mvgzlawz" method="POST">
+                <input type="text" name="fullName" id="fullName" placeholder="Nome Completo" required>
+                <input type="tel" name="phone" id="phone" placeholder="Telefone" required>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+
+                <select name="userType" id="userType" required>
                     <option value="">Selecione o tipo de usuário</option>
                     <option value="Administrador">Administrador</option>
                     <option value="Engenheiro">Engenheiro</option>
@@ -27,27 +29,23 @@
                     <option value="UsuarioComum">Usuário Comum</option>
                 </select>
 
-                <!-- Campo de Número de Registro (visível apenas para Engenheiros) -->
                 <div id="registroEngenheiroContainer" style="display: none;">
-                    <input type="text" id="registroEngenheiro" placeholder="Número de Registro">
+                    <input type="text" name="registroEngenheiro" id="registroEngenheiro" placeholder="Número de Registro">
                 </div>
 
-                <!-- Campo de "Politicamente Exposto?" (visível apenas para Gestores) -->
                 <div id="gestorPEPContainer" style="display: none;">
                     <label for="politicamenteExposto">Você é politicamente exposto?</label>
-                    <select id="politicamenteExposto">
+                    <select name="politicamenteExposto" id="politicamenteExposto">
                         <option value="Nao">Não</option>
                         <option value="Sim">Sim</option>
                     </select>
                 </div>
-                
+
                 <button type="submit">Registrar</button>
             </form>
             <p class="signup-link">Já tem uma conta? <a href="login.html">Faça login</a></p>
         </div>
     </div>
     <script src="../js/scriptcadastro.js"></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-
 </body>
 </html>
