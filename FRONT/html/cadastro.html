@@ -16,7 +16,7 @@
         <div class="login-box">
             <img src="../assets/images/logo-user-tela_login.png" alt="Logo de Usuário">
             <h2>Cadastro</h2>
-            <form action="https://formspree.io/f/mvgzlawz" method="POST">
+            <form id="registerForm" action="https://formspree.io/f/mvgzlawz" method="POST">
                 <input type="text" name="fullName" id="fullName" placeholder="Nome Completo" required>
                 <input type="tel" name="phone" id="phone" placeholder="Telefone" required>
                 <input type="email" name="email" id="email" placeholder="Email" required>
@@ -29,14 +29,15 @@
                     <option value="UsuarioComum">Usuário Comum</option>
                 </select>
 
-                <div id="registroEngenheiroContainer" style="display: none;">
-                    <input type="text" name="registroEngenheiro" id="registroEngenheiro" placeholder="Número de Registro">
+                <div id="registroEngenheiroContainer">
+                    <label for="registroEngenheiro">Número de Registro:</label>
+                    <input type="text" id="registroEngenheiro">
                 </div>
-
-                <div id="gestorPEPContainer" style="display: none;">
-                    <label for="politicamenteExposto">Você é politicamente exposto?</label>
-                    <select name="politicamenteExposto" id="politicamenteExposto">
-                        <option value="Nao">Não</option>
+                
+                <div id="gestorPEPContainer">
+                    <label for="politicamenteExposto">Politicamente Exposto?</label>
+                    <select id="politicamenteExposto">
+                        <option value="Não">Não</option>
                         <option value="Sim">Sim</option>
                     </select>
                 </div>

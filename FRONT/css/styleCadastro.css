@@ -115,3 +115,8 @@ h1{
 #userType{
     margin-bottom: 10px;
 }
+
+#registroEngenheiroContainer,
+#gestorPEPContainer {
+    display: none;
+}

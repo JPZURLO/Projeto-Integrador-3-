@@ -35,9 +35,9 @@ document.getElementById('login-form').addEventListener('submit', function(event)
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('NomeCompleto', data.NomeCompleto);
 
-                console.log('🔄 Redirecionando para login_cliente.html...');
+                console.log('🔄 Redirecionando para tela_pos_login.html...');
                 // Substitui a página para evitar voltar à tela de login
-                window.location.replace('login_cliente.html');
+                window.location.replace('tela_pos_login.html');
             } else {
                 errorMessage.textContent = data.message || 'Erro no login';
             }
