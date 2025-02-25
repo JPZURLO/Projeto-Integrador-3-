@@ -19,60 +19,23 @@
                         <li><a href="alterar.html">Alterar</a></li>
                         <li><a href="consultar.html">Consultar</a></li>
                     </ul>
-                </li>                <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
-                <li>
-                    <div id="user-info">
-                        <span id="user-name"></span>
-                    </div>
-                </li>
+                </li>                
+                <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="has-submenu2">
+                  <a href="javascript:void(0);" id="user-name-link">
+                    <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
+                  </a>
+                  <ul class="submenu2">
+                    <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
+                  </ul>
+                </li> 
             </ul>
         </nav>
     </header>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          const userNameElement = document.getElementById('user-name');
-          const storedName = localStorage.getItem('NomeCompleto');
-    
-          if (storedName) {
-            userNameElement.textContent = storedName;
-          } else {
-            fetchUserName(); // Chama a função para buscar o nome, caso não esteja no localStorage.
-          }
-    
-          function fetchUserName() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-              console.error('Token não encontrado');
-              return;
-            }
-    
-            fetch('http://localhost:5500/api/obterNomeCompleto', {
-              method: 'GET',
-              headers: {
-                'Authorization': 'Bearer ' + token
-              }
-            })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.json();
-            })
-            .then(data => {
-              if (data.NomeCompleto) {
-                userNameElement.textContent = data.NomeCompleto;
-                localStorage.setItem('NomeCompleto', data.NomeCompleto); // Atualiza o localStorage
-              }
-            })
-            .catch(error => {
-              console.error('Erro ao buscar o nome completo do usuário:', error);
-            });
-          }
-        });
-    
-          
-    </script>
     <script src="../js/scriptLogin.js"></script>
+    <script src="../js/scriptUserInfo.js"></script>
+    <script src="../js/scriptLogout.js"></script>
     <script src="../js/scriptOpçõesObras.js"></script>
 </body>
+
 </html>
