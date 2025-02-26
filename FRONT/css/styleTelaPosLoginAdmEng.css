@@ -10,7 +10,12 @@ header {
     padding-right: 10px;
     background-color: black;
 }
-  
+
+h2{
+  font-size: 15px;
+  color: white;
+}
+
 nav ul {
     list-style: none; /* Remove os marcadores de lista */
     margin: 0;
@@ -182,4 +187,102 @@ nav a {
 /* Exibir o submenu ao passar o mouse */
 .has-submenu2:hover .submenu2 {
   display: block;
+}
+
+/* DIV 1*/
+.container {
+  width: 100%;
+  height: 300px; /* Altura da sua div principal */
+  background-image: url("../assets/images/Obras-Paralisadas-2021.jpg"); /* URL da sua imagem de fundo */
+  background-size: cover; /* Ajusta a imagem para cobrir todo o container */
+  position: relative; /* Importante para posicionar o quadrado */
+}
+
+.square {
+  width: 100%;
+  height: 100%; /* Opcional: altura igual à do container */
+  background-color: rgba(0, 0, 0, 0.753); /* Cor de fundo branca com 50% de opacidade */
+  position: absolute; /* Posiciona o quadrado dentro do container */
+  left: 0; /* Alinha o quadrado à esquerda */
+  display: flex; /* Centraliza o texto verticalmente */
+  justify-content: center; /* Centraliza o texto horizontalmente */
+  display: flex;
+  flex-direction: column; /* Organiza os elementos em coluna */
+  align-items: center; /* Centraliza o texto horizontalmente */
+  text-align: center;
+}
+
+.square p {
+  color: #ffffff; /* Cor do texto */
+  font-size: 23px;
+  text-align: center;
+  margin-bottom: 0%;
+}
+
+/* Tabela Obras no sistema */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+table {
+  width: 90%;
+  margin: 10px auto;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+}
+.invisible {
+  border: none;
+  background-color: transparent;
+}
+.header-row td:not(.invisible) {
+  background-color: blue;
+  color: white;
+  font-weight: bold;
+}
+.total-row td:not(.invisible), .region-cell {
+  background-color: rgb(255, 94, 0);
+  font-weight: bold;
+}
+
+/* DIV OBRAS RECENTES */
+.obras-recentes-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  margin: 20px auto;
+}
+.obras-recentes {
+  display: flex;
+  overflow: hidden;
+  width: 80%;
+  justify-content: space-between;
+}
+.obra {
+  width: 30%;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+.obra img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+.btn {
+  background-color: gray;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.btn:disabled {
+  background-color: lightgray;
+  cursor: default;
 }

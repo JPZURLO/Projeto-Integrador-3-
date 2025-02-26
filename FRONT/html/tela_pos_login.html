@@ -32,10 +32,91 @@
             </ul>
         </nav>
     </header>
+    <div class="container">
+        <div class="square">
+            <p>Bem-Vindo a <strong>GESTÃO PÚBLICA DIGITAL</strong></p>
+            <h2>A Principal ferramenta de gestão de obras públicas.</h2>
+        </div>
+    </div>
+    <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <h2>Obras no Sistema</h2>
+    <table>
+        <tr class="header-row">
+            <td class="invisible"></td>
+            <td>Total de Obras</td>
+            <td>Residencial</td>
+            <td>Comercial</td>
+            <td>Industrial</td>
+        </tr>
+        <tr>
+            <td class="invisible"></td>
+            <td>Celula 1</td>
+            <td>Celula 2</td>
+            <td>Celula 3</td>
+            <td>Celula 4</td>
+        </tr>
+        <tr class="total-row">
+            <td class="invisible"></td>
+            <td>Total</td>
+            <td>Residencial</td>
+            <td>Comercial</td>
+            <td>Industrial</td>
+        </tr>
+        <tr>
+            <td class="region-cell">Sudeste</td>
+            <td>Celula 1</td>
+            <td>Celula 2</td>
+            <td>Celula 3</td>
+            <td>Celula 4</td>
+        </tr>
+        <tr>
+            <td class="region-cell">Sul</td>
+            <td>Celula 1</td>
+            <td>Celula 2</td>
+            <td>Celula 3</td>
+            <td>Celula 4</td>
+        </tr>
+        <tr>
+            <td class="region-cell">Norte</td>
+            <td>Celula 1</td>
+            <td>Celula 2</td>
+            <td>Celula 3</td>
+            <td>Celula 4</td>
+        </tr>
+        <tr>
+            <td class="region-cell">Nordeste</td>
+            <td>Celula 1</td>
+            <td>Celula 2</td>
+            <td>Celula 3</td>
+            <td>Celula 4</td>
+        </tr>
+        <tr>
+            <td class="region-cell">Centro-Oeste</td>
+            <td>Celula 1</td>
+            <td>Celula 2</td>
+            <td>Celula 3</td>
+            <td>Celula 4</td>
+        </tr>
+    </table>
+
+    <h3>Obras Recentes</h3>
+    <div class="obras-recentes-container">
+        <button class="btn" id="prevBtn" onclick="mudarObras(-1)" disabled>&lt;</button>
+        <div class="obras-recentes" id="obrasRecentes">
+            <!-- Obras serão carregadas aqui dinamicamente -->
+        </div>
+        <button class="btn" id="nextBtn" onclick="mudarObras(1)">&gt;</button>
+    </div>
+
+
     <script src="../js/scriptLogin.js"></script>
     <script src="../js/scriptUserInfo.js"></script>
     <script src="../js/scriptLogout.js"></script>
-    <script src="../js/scriptOpçõesObras.js"></script>
+    <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/ObrasRecentes.js"></script>
+
 </body>
 
 </html>
