@@ -9,6 +9,8 @@ header {
   align-items: center; /* Alinha os itens verticalmente ao centro */
   padding-right: 10px;
   background-color: black;
+  position: relative; /* Mantém o header fixo sem interferir nos submenus */
+  z-index: 10;
 }
 
 h2{
@@ -23,10 +25,7 @@ nav ul {
   display: flex; /* Ativa o Flexbox para a lista de navegação */
 }
 
-header {
-  position: relative; /* Mantém o header fixo sem interferir nos submenus */
-  z-index: 10;
-}
+
 
 .container {
   width: 100%;
@@ -263,7 +262,7 @@ cursor: default;
 /* Estilo do botão de "Sair" */
 #logout-button a {
   padding: 10px 15px;
-  background-color: #d9534f; /* Cor vermelha para o botão de sair */
+  background-color: #ff0e06; /* Cor vermelha para o botão de sair */
   color: white;
   border: none;
   border-radius: 5px;
@@ -273,7 +272,7 @@ cursor: default;
 
 /* Hover do botão de "Sair" */
 #logout-button a:hover {
-  background-color: #c9302c; /* Cor mais escura no hover */
+  background-color: #ff0c048a; /* Cor mais escura no hover */
 }
 
 .menu {
@@ -297,4 +296,12 @@ cursor: default;
   font-size: 16px;
   white-space: nowrap; /* Evita quebras de linha no nome do usuário */
 
+}
+
+.submenu2, #submenu_obras {
+  display: none;
+}
+
+.show {
+  display: block !important;
 }

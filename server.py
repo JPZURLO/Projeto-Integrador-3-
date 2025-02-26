@@ -34,6 +34,11 @@ def login():
     else:
         return jsonify({'success': False, 'message': 'Credenciais inválidas.'}), 401
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    # O token será removido do lado do cliente, então aqui apenas confirmamos a ação
+    return jsonify({'success': True, 'message': 'Logout realizado com sucesso!'})
+
 # Rodando o servidor Flask na porta 5500
 if __name__ == '__main__':
     app.run(port=5500, debug=True)

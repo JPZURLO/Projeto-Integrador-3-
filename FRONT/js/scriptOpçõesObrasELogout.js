@@ -1,22 +1,23 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const submenuToggle = document.getElementById("opcao_obra");
-    const submenu = document.getElementById("submenu_obras");
-
-    submenuToggle.addEventListener("click", function (event) {
+    // Toggle submenu OBRAS
+    document.querySelector(".has-submenu > a").addEventListener("click", function (event) {
         event.preventDefault();
-        submenu.style.display = submenu.style.display === "none" ? "block" : "none";
+        document.getElementById("submenu_obras").classList.toggle("show");
     });
 
-    // Fechar o submenu ao clicar fora
-    document.addEventListener("click", function (event) {
-        if (!submenuToggle.contains(event.target) && !submenu.contains(event.target)) {
-            submenu.style.display = "none";
-        }
+    // Toggle submenu Usuário
+    document.getElementById("user-name-link").addEventListener("click", function (event) {
+        event.preventDefault();
+        document.querySelector(".submenu2").classList.toggle("show");
     });
+
+    // Fechar os submenus quando o logout for acionado
+    const logoutButton = document.getElementById("logout-button");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            // Fechar qualquer submenu aberto
+            document.getElementById("submenu_obras").classList.remove("show");
+            document.querySelector(".submenu2").classList.remove("show");
+        });
+    }
 });
-function logout() {
-    // Aqui você pode adicionar a lógica de logout, como limpar o token de autenticação ou redirecionar para a página de login.
-    alert('Você foi desconectado!');
-    // Exemplo de redirecionamento para a página de login
-    window.location.href = '/login'; // Redireciona para a página de login
-}
