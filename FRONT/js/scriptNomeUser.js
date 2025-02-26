@@ -38,3 +38,20 @@ document.getElementById('login-form').addEventListener('submit', function(event)
         errorMessage.textContent = error.message || 'Erro desconhecido.';
     });
 });
+
+// scriptLogout.js
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('NomeCompleto');
+    history.replaceState(null, null, "index.html");
+    window.location.href = './index.html';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!localStorage.getItem('token')) {
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            history.pushState(null, null, location.href);
+        };
+    }
+});

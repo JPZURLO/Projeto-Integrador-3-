@@ -10,25 +10,25 @@
     <header>
         <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
         <nav>
-            <ul>
+            <ul class="menu">
                 <li><a href="./index.html" id="link-home">HOME</a></li>
                 <li class="has-submenu">
                     <a href="#" id="opcao_obra">OBRAS</a>
-                    <ul class="submenu">
+                    <ul id="submenu_obras" style="display: none;">
                         <li><a href="cadastrar.html">Cadastrar</a></li>
                         <li><a href="alterar.html">Alterar</a></li>
                         <li><a href="consultar.html">Consultar</a></li>
                     </ul>
-                </li>                
+                </li>                            
                 <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
                 <li class="has-submenu2">
-                  <a href="javascript:void(0);" id="user-name-link">
-                    <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
-                  </a>
-                  <ul class="submenu2">
-                    <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
-                  </ul>
-                </li> 
+                    <a href="javascript:void(0);" id="user-name-link">
+                        <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
+                    </a>
+                    <ul class="submenu2">
+                        <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
+                    </ul>
+                </li>                
             </ul>
         </nav>
     </header>
@@ -113,7 +113,6 @@
 
     <script src="../js/scriptLogin.js"></script>
     <script src="../js/scriptUserInfo.js"></script>
-    <script src="../js/scriptLogout.js"></script>
     <script src="../js/scriptOpçõesObrasELogout.js"></script>
     <script src="../js/ObrasRecentes.js"></script>
 
