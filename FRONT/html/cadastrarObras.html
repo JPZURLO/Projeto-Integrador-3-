@@ -12,7 +12,7 @@
         <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
         <nav>
             <ul class="menu">
-                <li><a href="./index.html" id="link-home">HOME</a></li>
+                <li><a href="./tela_pos_login.html" id="link-home">INÍCIO</a></li>
                 <li class="has-submenu">
                     <a href="#" id="opcao_obra">OBRAS</a>
                     <ul id="submenu_obras" style="display: none;">
@@ -20,7 +20,7 @@
                         <li><a href="alterar.html">Alterar</a></li>
                         <li><a href="consultar.html">Consultar</a></li>
                     </ul>
-                </li>                            
+                </li>                             
                 <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
                 <li class="has-submenu2">
                     <a href="javascript:void(0);" id="user-name-link">
@@ -33,8 +33,90 @@
             </ul>
         </nav>
     </header>
+    <div class="container">
+        <div class="square">
+            <p>CADASTRO DE OBRAS</p>
+        </div>
+    </div>
+    <form action="/cadastrar-obra" method="POST" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="id">Código da Obra (ID)</label>
+            <input type="text" id="id" name="id" readonly placeholder="ID gerado automaticamente" />
+          </div>
+          <div class="form-group">
+            <label for="nome-da-obra">Nome da Obra</label>
+            <input type="text" id="nome-da-obra" name="NomeDaObra" required placeholder="Nome da obra" />
+          </div>
+          <div class="form-group">
+            <label for="regiao">Região do Brasil</label>
+            <select id="regiao" name="Regiao" required>
+                <option value="">Selecione a Região</option>
+                {{#each regioes}}
+                  <option value="{{this.id}}">{{this.Nome_Regiao}}</option>
+                {{/each}}
+            </select>
+          </div>
+        </div>
+      
+        <div class="form-row">
+          <div class="form-group">
+            <label for="classificacao">Classificação da Obra</label>
+            <select id="classificacao" name="ClassificacaoDaObra" required>
+                <option value="">Selecione a Classificação</option>
+                {{#each classificacoes}}
+                  <option value="{{this.id}}">{{this.TipoDeObra}}</option>
+                {{/each}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="data-inicio">Data de Início</label>
+            <input type="date" id="data-inicio" name="DataDeInicio" required />
+          </div>
+          <div class="form-group">
+            <label for="data-fim">Data de Fim</label>
+            <input type="date" id="data-fim" name="DataDeEntrega" required />
+          </div>
+        </div>
+      
+        <div class="form-row">
+          <div class="form-group">
+            <label for="orcamento">Orçamento Utilizado</label>
+            <input type="number" id="orcamento" name="Orcamento" step="0.01" required placeholder="Valor do orçamento" />
+          </div>
+          <div class="form-group">
+            <label for="engenheiro">Engenheiro Responsável</label>
+            <input type="text" id="engenheiro" name="EngResponsavel" required placeholder="Nome do engenheiro" />
+          </div>
+          <div class="form-group">
+            <label for="status">Status da Obra</label>
+            <select id="status" name="Status" required>
+                <option value="">Selecione o Status</option>
+                {{#each status}}
+                  <option value="{{this.id}}">{{this.Classificacao}}</option>
+                {{/each}}
+            </select>
+          </div>
+        </div>
+      
+        <div class="form-row">
+          <div class="form-group">
+            <label for="imagens">Imagens (máximo 5)</label>
+            <input type="file" id="imagens" name="Imagens" multiple accept="image/*" />
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" name="Descricao" rows="5" required placeholder="Descrição detalhada da obra"></textarea>
+        </div>
+      
+        <button type="submit">Cadastrar Obra</button>
+      </form>
+      
 
     <script src="../js/scriptUserInfo.js"></script>
+    <script src="../js/scriptLogout.js"></script>
     <script src="../js/scriptLogin.js"></script>
     <script src="../js/scriptOpçõesObrasELogout.js"></script>
 

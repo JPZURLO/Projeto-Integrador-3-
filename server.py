@@ -18,6 +18,31 @@ db = mysql.connector.connect(
     database='gestaopublicadigital'
 )
 
+# Rota para o cadastro da obra
+@app.route('/cadastrar-obra', methods=['GET'])
+def cadastrar_obra():
+    cursor = db.cursor(dictionary=True)
+    
+    # Consultar as opções de regiões
+    cursor.execute('SELECT id, Nome_Regiao FROM regioesbrasil')
+    regioes = cursor.fetchall()
+
+    # Consultar as opções de classificações
+    cursor.execute('SELECT id, TipoDeObra FROM classificacaodasobras')
+    classificacoes = cursor.fetchall()
+
+    # Consultar as opções de status
+    cursor.execute('SELECT id, Classificacao FROM statusdaobra')
+    status = cursor.fetchall()
+
+    # Retornar os dados como JSON
+    return jsonify({
+        'regioes': regioes,
+        'classificacoes': classificacoes,
+        'status': status
+    })
+
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
