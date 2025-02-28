@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
      // Validação da data
-    form.addEventListener('submit', function(event) { // Corrigido para form.addEventListener
+    form.addEventListener('submit', function(event) {
         const dataInicio = new Date(document.getElementById('DataDeInicio').value);
         const dataTermino = new Date(document.getElementById('DataDeEntrega').value);
 
