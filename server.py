@@ -111,23 +111,21 @@ def adicionar_obra():
         print(f"Descrição: {descricao}")
         print(f"Engenheiro responsável: {engenheiro_responsavel}")
 
-        imagem = request.files.get('Imagem')
-        imagem_path = None
+        imagens = request.files.getlist('imagem')  # Obtém a lista de imagens
+        imagem_paths = []
 
-        if imagem:
-            print("Imagem recebida.")
-            filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
-            imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            print(f"Caminho da imagem: {imagem_path}")
-            imagem.save(imagem_path)
-            imagem_path = imagem_path.replace("\\", "/")
-            print(f"Caminho da imagem após substituição: {imagem_path}")
-        else:
-            print("Nenhuma imagem recebida.")
+        for imagem in imagens:
+            if imagem:
+                print("Imagem recebida.")
+                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
+                imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                imagem.save(imagem_path)
 
-        if not nome_da_obra or not regiao_nome or not classificacao_nome or not status_nome or not data_inicio or not data_termino or not orcamento_utilizado or not engenheiro_responsavel:
-            print("Campos obrigatórios não preenchidos.")
-            return jsonify({'error': 'Campos obrigatórios não foram preenchidos.'}), 400
+                # Salvar apenas o nome do arquivo no banco de dados
+                imagem_paths.append(filename)
+            else:
+                print("Nenhuma imagem recebida.")
+
         
         data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
         data_termino_obj = datetime.strptime(data_termino, '%Y-%m-%d').date()
@@ -165,11 +163,11 @@ def adicionar_obra():
         status_id = status_id[0]
         print(f"ID do status encontrado: {status_id}")
 
-        print("Inserindo obra no banco de dados.")
+        import json
         cursor.execute("""
             INSERT INTO obras (NomeDaObra, Regiao, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orçamento, EngResponsavel, DescricaoDaObra, Imagens)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio, data_termino, orcamento_utilizado, engenheiro_responsavel, descricao, imagem_path)) # campos corrigidos
+        """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio, data_termino, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
 
         db.commit()
         cursor.close()
@@ -189,6 +187,32 @@ def adicionar_obra():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
         print("Fim da função adicionar_obra")
+        
+@app.route('/obras-recentes', methods=['GET'])
+def obras_recentes():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT id, DescricaoDaObra
+            FROM obras
+            ORDER BY id DESC
+            LIMIT 6
+        """)
+        obras = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+
+        return jsonify({'obras': obras})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 
 #  Rota de logout (simples confirmação)
 @app.route('/logout', methods=['POST'])

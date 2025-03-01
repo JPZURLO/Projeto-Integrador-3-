@@ -2,113 +2,104 @@
 <html lang="pt-br">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro de Obras</title>
-  <link rel="stylesheet" href="../css/styleCadastroObras.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Obras</title>
+    <link rel="stylesheet" href="../css/styleCadastroObras.css">
 </head>
 
 <body>
-  <header>
-    <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
-    <nav>
-      <ul class="menu">
-        <li><a href="./tela_pos_login.html" id="link-home">INÍCIO</a></li>
-        <li class="has-submenu">
-          <a href="#" id="opcao_obra">OBRAS</a>
-          <ul id="submenu_obras" style="display: none;">
-            <li><a href="cadastrarObras.html">Cadastrar</a></li>
-            <li><a href="alterar.html">Alterar</a></li>
-            <li><a href="consultar.html">Consultar</a></li>
-          </ul>
-        </li>
-        <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
-        <li class="has-submenu2">
-          <a href="javascript:void(0);" id="user-name-link">
-            <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
-          </a>
-          <ul class="submenu2">
-            <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
-  </header>
-  <div class="container">
-    <div class="square">
-      <p>CADASTRO DE OBRAS</p>
+    <header>
+        <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
+        <nav>
+            <ul class="menu">
+                <li><a href="./tela_pos_login.html" id="link-home">INÍCIO</a></li>
+                <li class="has-submenu">
+                    <a href="#" id="opcao_obra">OBRAS</a>
+                    <ul id="submenu_obras" style="display: none;">
+                        <li><a href="cadastrarObras.html">Cadastrar</a></li>
+                        <li><a href="alterar.html">Alterar</a></li>
+                        <li><a href="consultar.html">Consultar</a></li>
+                    </ul>
+                </li>
+                <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="has-submenu2">
+                    <a href="javascript:void(0);" id="user-name-link">
+                        <span id="user-name">Nome do Usuário</span>
+                    </a>
+                    <ul class="submenu2">
+                        <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="square">
+            <p>CADASTRO DE OBRAS</p>
+        </div>
     </div>
-  </div>
-  <form action="/cadastrar-obra" id="formCadastroObra" method="POST" enctype="multipart/form-data">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="id">Código da Obra (ID)</label>
-        <input type="text" id="id" name="id" readonly placeholder="ID gerado automaticamente" />
-      </div>
-      <div class="form-group">
-        <label for="nome-da-obra">Nome da Obra</label>
-        <input type="text" id="nome-da-obra" name="NomeDaObra" required placeholder="Nome da obra" />
-      </div>
-      <div class="form-group">
-        <label for="regiao">Região:</label>
-        <select id="regiao" name="Regiao" required></select>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="classificacao">Classificação da Obra:</label>
-        <select id="classificacao" name="ClassificacaoDaObra" required></select>
-      </div>
-      <div class="form-group">
-        <label for="data-inicio">Data de Início</label>
-        <input type="date" id="data-inicio" name="DataDeInicio" required />
-      </div>
-      <div class="form-group">
-        <label for="data-fim">Data de Fim</label>
-        <input type="date" id="data-termino" name="DataDeEntrega" required />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="Orçamento">Orçamento Utilizado</label>
-        <input type="number" id="Orçamento" name="Orçamento" step="0.01" required placeholder="Valor do orçamento" />
-      </div>
-      <div class="form-group">
-        <label for="engenheiro">Engenheiro Responsável</label>
-        <input type="text" id="engenheiro" name="EngResponsavel" required placeholder="Nome do engenheiro" />
-      </div>
-      <div class="form-group">
-        <label for="status">Status da Obra:</label>
-        <select id="status" name="Status" required></select>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="imagens">Imagens (máximo 5)</label>
-        <input type="file" id="imagem" name="imagem" multiple accept="image/*" />
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="descricao">Descrição</label>
-      <textarea id="descricao" name="Descricao" rows="5" required placeholder="Descrição detalhada da obra"></textarea>
-    </div>
-
-    <button type="submit">Cadastrar Obra</button>
-  </form>
-
-
-  <script src="../js/scriptUserInfo.js"></script>
-  <script src="../js/scriptLogout.js"></script>
-  <script src="../js/scriptLogin.js"></script>
-  <script src="../js/scriptOpçõesObrasELogout.js"></script>
-  <script src="../js/scriptCadastroObraEnvio.js"></script>
-  <script src="../js/scriptCarregamentodasOpçõesCadastroObra.js"></script>
-
+    <form action="/adicionar-obra" id="formCadastroObra" method="POST" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id">Código da Obra (ID)</label>
+                <input type="text" id="id" name="id" readonly placeholder="ID gerado automaticamente" />
+            </div>
+            <div class="form-group">
+                <label for="nome-da-obra">Nome da Obra</label>
+                <input type="text" id="nome-da-obra" name="NomeDaObra" required placeholder="Nome da obra" />
+            </div>
+            <div class="form-group">
+                <label for="regiao">Região:</label>
+                <select id="regiao" name="Regiao" required></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="classificacao">Classificação da Obra:</label>
+                <select id="classificacao" name="ClassificacaoDaObra" required></select>
+            </div>
+            <div class="form-group">
+                <label for="data-inicio">Data de Início</label>
+                <input type="date" id="data-inicio" name="DataDeInicio" required />
+            </div>
+            <div class="form-group">
+                <label for="data-fim">Data de Fim</label>
+                <input type="date" id="data-termino" name="DataDeEntrega" required />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="Orçamento">Orçamento Utilizado</label>
+                <input type="number" id="Orçamento" name="Orçamento" step="0.01" required placeholder="Valor do orçamento" />
+            </div>
+            <div class="form-group">
+                <label for="engenheiro">Engenheiro Responsável</label>
+                <input type="text" id="engenheiro" name="EngResponsavel" required placeholder="Nome do engenheiro" />
+            </div>
+            <div class="form-group">
+                <label for="status">Status da Obra:</label>
+                <select id="status" name="Status" required></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="imagens">Imagens (máximo 5)</label>
+                <input type="file" id="imagem" name="imagem" multiple accept="image/*" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="Descricao" rows="5" required placeholder="Descrição detalhada da obra"></textarea>
+        </div>
+        <button type="submit">Cadastrar Obra</button>
+    </form>
+    <script src="../js/scriptUserInfo.js"></script>
+    <script src="../js/scriptLogout.js"></script>
+    <script src="../js/scriptLogin.js"></script>
+    <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/scriptCadastroObraEnvio.js"></script>
+    <script src="../js/scriptCarregamentodasOpçõesCadastroObra.js"></script>
 </body>
 
 </html>

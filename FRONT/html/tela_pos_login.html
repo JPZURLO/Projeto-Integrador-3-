@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Bem vindo há Gestão Pública Digital</title>
     <link rel="stylesheet" href="../css/styleTelaPosLoginAdmEng.css">
 </head>
+
 <body>
     <header>
         <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
@@ -19,7 +21,7 @@
                         <li><a href="alterar.html">Alterar</a></li>
                         <li><a href="consultar.html">Consultar</a></li>
                     </ul>
-                </li>                            
+                </li>
                 <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
                 <li class="has-submenu2">
                     <a href="javascript:void(0);" id="user-name-link">
@@ -28,7 +30,7 @@
                     <ul class="submenu2">
                         <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
                     </ul>
-                </li>                
+                </li>
             </ul>
         </nav>
     </header>
@@ -39,82 +41,81 @@
         </div>
     </div>
     <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <h2>Obras no Sistema</h2>
-    <table>
-        <tr class="header-row">
-            <td class="invisible"></td>
-            <td>Total de Obras</td>
-            <td>Residencial</td>
-            <td>Comercial</td>
-            <td>Industrial</td>
-        </tr>
-        <tr>
-            <td class="invisible"></td>
-            <td>Celula 1</td>
-            <td>Celula 2</td>
-            <td>Celula 3</td>
-            <td>Celula 4</td>
-        </tr>
-        <tr class="total-row">
-            <td class="invisible"></td>
-            <td>Total</td>
-            <td>Residencial</td>
-            <td>Comercial</td>
-            <td>Industrial</td>
-        </tr>
-        <tr>
-            <td class="region-cell">Sudeste</td>
-            <td>Celula 1</td>
-            <td>Celula 2</td>
-            <td>Celula 3</td>
-            <td>Celula 4</td>
-        </tr>
-        <tr>
-            <td class="region-cell">Sul</td>
-            <td>Celula 1</td>
-            <td>Celula 2</td>
-            <td>Celula 3</td>
-            <td>Celula 4</td>
-        </tr>
-        <tr>
-            <td class="region-cell">Norte</td>
-            <td>Celula 1</td>
-            <td>Celula 2</td>
-            <td>Celula 3</td>
-            <td>Celula 4</td>
-        </tr>
-        <tr>
-            <td class="region-cell">Nordeste</td>
-            <td>Celula 1</td>
-            <td>Celula 2</td>
-            <td>Celula 3</td>
-            <td>Celula 4</td>
-        </tr>
-        <tr>
-            <td class="region-cell">Centro-Oeste</td>
-            <td>Celula 1</td>
-            <td>Celula 2</td>
-            <td>Celula 3</td>
-            <td>Celula 4</td>
-        </tr>
-    </table>
+    <html lang="pt-br">
 
-    <h3>Obras Recentes</h3>
-    <div class="obras-recentes-container">
-        <button class="btn" id="prevBtn" onclick="mudarObras(-1)" disabled>&lt;</button>
-        <div class="obras-recentes" id="obrasRecentes">
-            <!-- Obras serão carregadas aqui dinamicamente -->
+    <head>
+        <h2>Obras no Sistema</h2>
+        <table>
+            <tr class="header-row">
+                <td class="invisible"></td>
+                <td>Total de Obras</td>
+                <td>Residencial</td>
+                <td>Comercial</td>
+                <td>Industrial</td>
+            </tr>
+            <tr>
+                <td class="invisible"></td>
+                <td>Celula 1</td>
+                <td>Celula 2</td>
+                <td>Celula 3</td>
+                <td>Celula 4</td>
+            </tr>
+            <tr class="total-row">
+                <td class="invisible"></td>
+                <td>Total</td>
+                <td>Residencial</td>
+                <td>Comercial</td>
+                <td>Industrial</td>
+            </tr>
+            <tr>
+                <td class="region-cell">Sudeste</td>
+                <td>Celula 1</td>
+                <td>Celula 2</td>
+                <td>Celula 3</td>
+                <td>Celula 4</td>
+            </tr>
+            <tr>
+                <td class="region-cell">Sul</td>
+                <td>Celula 1</td>
+                <td>Celula 2</td>
+                <td>Celula 3</td>
+                <td>Celula 4</td>
+            </tr>
+            <tr>
+                <td class="region-cell">Norte</td>
+                <td>Celula 1</td>
+                <td>Celula 2</td>
+                <td>Celula 3</td>
+                <td>Celula 4</td>
+            </tr>
+            <tr>
+                <td class="region-cell">Nordeste</td>
+                <td>Celula 1</td>
+                <td>Celula 2</td>
+                <td>Celula 3</td>
+                <td>Celula 4</td>
+            </tr>
+            <tr>
+                <td class="region-cell">Centro-Oeste</td>
+                <td>Celula 1</td>
+                <td>Celula 2</td>
+                <td>Celula 3</td>
+                <td>Celula 4</td>
+            </tr>
+        </table>
+
+        <h3>Obras Recentes</h3>
+        <div class="obras-recentes-container">
+            <button class="btn" id="prevBtn" onclick="mudarObras(-1)" disabled>&lt;</button>
+            <div class="obras-recentes" id="obrasRecentes"></div>
+            <button class="btn" id="nextBtn" onclick="mudarObras(1)">&gt;</button>
         </div>
-        <button class="btn" id="nextBtn" onclick="mudarObras(1)">&gt;</button>
-    </div>
-    
-    <script src="../js/scriptLogout.js"></script>
-    <script src="../js/scriptLogin.js"></script>
-    <script src="../js/scriptUserInfo.js"></script>
-    <script src="../js/scriptOpçõesObrasELogout.js"></script>
-    <script src="../js/ObrasRecentes.js"></script>
+
+        <script src="../js/scriptLogout.js"></script>
+        <script src="../js/scriptLogin.js"></script>
+        <script src="../js/scriptUserInfo.js"></script>
+        <script src="../js/scriptOpçõesObrasELogout.js"></script>
+        <script src="../js/ObrasRecentes.js"></script>
 
 </body>
 
