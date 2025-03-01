@@ -5,6 +5,9 @@ import mysql.connector
 from datetime import datetime, timedelta
 import os
 import traceback
+import json  # Adicione esta linha
+
+
 
 
 app = Flask(__name__, static_folder='front-end')
@@ -22,6 +25,15 @@ db_config = {
     'password': os.getenv('DB_PASSWORD', 'De182246@'),  # Melhor usar variável de ambiente
     'database': 'gestaopublicadigital'
 }
+
+def get_db_connection():
+    return mysql.connector.connect(**db_config)
+
+def gerar_hash_imagem(imagem):
+    hash_md5 = hashlib.md5()
+    for chunk in imagem:
+        hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 def get_db_connection():
     return mysql.connector.connect(**db_config)
@@ -50,6 +62,9 @@ def login():
             return jsonify({'success': False, 'message': 'Credenciais inválidas.'}), 401
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+import hashlib
+
 
 #  Rota para obter opções de cadastro da obra
 @app.route('/cadastrar-obra', methods=['GET'])
@@ -100,6 +115,7 @@ def adicionar_obra():
         descricao = request.form.get('Descricao')
         engenheiro_responsavel = request.form.get('EngResponsavel')
 
+        
         print("Valores dos campos:")
         print(f"Nome da obra: {nome_da_obra}")
         print(f"Região: {regiao_nome}")
@@ -111,21 +127,22 @@ def adicionar_obra():
         print(f"Descrição: {descricao}")
         print(f"Engenheiro responsável: {engenheiro_responsavel}")
 
-        imagens = request.files.getlist('imagem')  # Obtém a lista de imagens
+        imagens = request.files.getlist('imagem')
         imagem_paths = []
+        imagens_hash = set()
 
         for imagem in imagens:
             if imagem:
-                print("Imagem recebida.")
-                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
-                imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                imagem.save(imagem_path)
+                imagem_content = imagem.read()
+                imagem_hash = gerar_hash_imagem([imagem_content])
+                imagem.stream.seek(0)
 
-                # Salvar apenas o nome do arquivo no banco de dados
-                imagem_paths.append(filename)
-            else:
-                print("Nenhuma imagem recebida.")
-
+                if imagem_hash not in imagens_hash:
+                    imagens_hash.add(imagem_hash)
+                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
+                    imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    imagem.save(imagem_path)
+                    imagem_paths.append(f"/uploads/{filename}")
         
         data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
         data_termino_obj = datetime.strptime(data_termino, '%Y-%m-%d').date()
@@ -173,20 +190,14 @@ def adicionar_obra():
         cursor.close()
         db.close()
 
-        print("Obra cadastrada com sucesso.")
-        print("Fim do bloco try")
         return jsonify({
             'success': True,
             'message': 'Obra cadastrada com sucesso!',
-            'redirect': '/tela_pos_login.html'  # Adicionado o campo redirect
         }), 201
-        
     except Exception as e:
-        print("Dentro do bloco except")
-        print(f"Erro ao adicionar obra: {str(e)}")
+        print("Erro ao adicionar obra:", str(e))
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
-        print("Fim da função adicionar_obra")
         
 @app.route('/obras-recentes', methods=['GET'])
 def obras_recentes():
@@ -195,7 +206,7 @@ def obras_recentes():
         cursor = db.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT id, DescricaoDaObra
+            SELECT id, DescricaoDaObra, Imagens
             FROM obras
             ORDER BY id DESC
             LIMIT 6
@@ -205,9 +216,13 @@ def obras_recentes():
         cursor.close()
         db.close()
 
-        return jsonify({'obras': obras})
+        # Modificando a resposta para retornar as obras
+        return jsonify({
+            'obras': obras
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/uploads/<filename>')
 def get_image(filename):
@@ -218,6 +233,10 @@ def get_image(filename):
 @app.route('/logout', methods=['POST'])
 def logout():
     return jsonify({'success': True, 'message': 'Logout realizado com sucesso!'})
+
+@app.route('/tela_pos_login')
+def tela_pos_login():
+    return send_from_directory(os.path.join(app.static_folder, 'html'), 'tela_pos_login.html')
 
 #  Iniciar servidor
 if __name__ == '__main__':
