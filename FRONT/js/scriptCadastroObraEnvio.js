@@ -39,14 +39,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
-    
+
+        // Validação do campo de data final
         if (!validarDataFinal()) {
             return;
         }
-    
+
+        // Validação do campo de orçamento
+        let orcamento = document.getElementById('Orçamento').value;
+        if (!orcamento) {
+            alert('O campo de orçamento é obrigatório!');
+            return;  // Impede o envio do formulário se o campo estiver vazio
+        }
+
+        // Passo 1: Remover os pontos de milhar (.) 
+        orcamento = orcamento.replace(/\./g, '');
+
+        // Passo 2: Substituir a vírgula por ponto (para garantir o formato decimal correto)
+        orcamento = orcamento.replace(',', '.');
+
+        // Passo 3: Garantir que o valor seja um número válido
+        if (isNaN(orcamento)) {
+            alert('O valor do orçamento é inválido!');
+            return;
+        }
+
+        // Agora orcamento está no formato correto para enviar para o backend
         const formData = new FormData(form);
+        formData.append('orcamento', orcamento); // Certifique-se de adicionar o orcamento formatado
+
+
+        // Coletar os dados do formulário
         const imagemInput = document.getElementById('imagem');
-    
+
+        // Validação das imagens
         if (imagemInput && imagemInput.files.length > 0) {
             for (const file of imagemInput.files) {
                 formData.append('imagem', file);
@@ -55,20 +81,21 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Por favor, selecione pelo menos uma imagem!');
             return;
         }
-    
+
+        // Envio para o servidor
         try {
             const response = await fetch('http://localhost:5500/adicionar-obra', {
                 method: 'POST',
                 body: formData
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
-    
+
             const data = await response.json();
             console.log('Dados da resposta:', data);
-    
+
             if (data.success) {
                 alert('Obra cadastrada com sucesso!');
                 if (data.redirect) {
@@ -83,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Erro ao enviar a obra. Verifique a conexão com o servidor.');
         }
     });
-    
+
     function validarDataFinal() {
         const dataInicio = new Date(dataInicioInput.value);
         const dataTermino = new Date(dataTerminoInput.value);

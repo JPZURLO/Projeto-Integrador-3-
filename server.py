@@ -111,10 +111,19 @@ def adicionar_obra():
         status_nome = request.form.get('Status')
         data_inicio = request.form.get('DataDeInicio') # Corrigido
         data_termino = request.form.get('DataDeEntrega') # Corrigido
-        orcamento_utilizado = request.form.get('Orçamento') # Corrigido
+        orcamento_utilizado = request.form.get('orcamento')  # Corrigido para 'orcamento'
         descricao = request.form.get('Descricao')
         engenheiro_responsavel = request.form.get('EngResponsavel')
 
+        # Transformação do orçamento
+        orcamento_utilizado = orcamento_utilizado.replace('.', '')  # Remover os pontos
+        orcamento_utilizado = orcamento_utilizado.replace(',', '.')  # Substituir vírgula por ponto
+
+        # Garantir que o valor do orçamento seja um número válido
+        try:
+            orcamento_utilizado = float(orcamento_utilizado)
+        except ValueError:
+            raise ValueError("O valor do orçamento é inválido!")
         
         print("Valores dos campos:")
         print(f"Nome da obra: {nome_da_obra}")
@@ -186,6 +195,7 @@ def adicionar_obra():
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio, data_termino, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
 
+        
         db.commit()
         cursor.close()
         db.close()
