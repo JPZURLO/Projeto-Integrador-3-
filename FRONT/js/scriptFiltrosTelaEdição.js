@@ -38,3 +38,4 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Erro ao carregar os dados:", error);
     }
 });
+

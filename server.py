@@ -233,7 +233,31 @@ def obras_recentes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/obras-editar', methods=['GET'])
+def obras_editar():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
 
+        # Modificando a query para retornar apenas as imagens das obras
+        cursor.execute("""
+            SELECT Imagens
+            FROM obras
+            ORDER BY id DESC
+        """)
+        obras = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+
+        # Modificando a resposta para retornar apenas as imagens
+        return jsonify({
+            'obras': obras
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
 @app.route('/uploads/<filename>')
 def get_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
