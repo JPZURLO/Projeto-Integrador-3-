@@ -1,0 +1,307 @@
+body{
+  margin: 0%;
+}
+
+/* Navegação- logo e opções */
+header {
+  display: flex; /* Ativa o Flexbox para o header */
+  justify-content: space-between; /* Distribui os itens ao longo do header */
+  align-items: center; /* Alinha os itens verticalmente ao centro */
+  padding-right: 10px;
+  background-color: black;
+  position: relative; /* Mantém o header fixo sem interferir nos submenus */
+  z-index: 10;
+}
+
+h2{
+font-size: 15px;
+color: white;
+}
+
+nav ul {
+  list-style: none; /* Remove os marcadores de lista */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Ativa o Flexbox para a lista de navegação */
+}
+
+
+
+.container {
+  width: 100%;
+  height: 400px; /* Altura da sua div principal */
+  background-image: url("../assets/images/image1-container1.jpg"); /* URL da sua imagem de fundo */
+  background-size: cover; /* Ajusta a imagem para cobrir todo o container */
+  position: relative; /* Importante para posicionar o quadrado */
+}
+
+/* Garante que o submenu fique abaixo da opção "Obras" */
+nav li {
+position: relative;
+margin-left: 30px;
+margin-right: 30px;
+display: block; /* Isso garante que o submenu apareça abaixo */
+}
+
+nav a {
+text-decoration: none;
+color: white;
+padding: 10px 0; /* Ajusta a altura para ficar igual aos outros itens */
+display: flex; /* Permite alinhar o ícone e o texto */
+align-items: center;
+}
+
+/* Estilo para o item do submenu */
+.has-submenu > a {
+display: flex;
+align-items: center;
+padding: 5px 10px; /* Adicionado padding para garantir que o tamanho seja consistente */
+}
+
+/* Ícone indicando que há submenu */
+.has-submenu > a::after {
+content: " ▼"; /* Pequeno ícone de seta */
+font-size: 15px;
+margin-left: 2px;
+}
+
+/* Estilização do submenu */
+#submenu_obras {
+display: none; /* Esconde o submenu inicialmente */
+position: absolute; /* Posiciona o submenu fora do header, abaixo do item */
+top: 100%; /* Coloca o submenu logo abaixo do item "OBRAS" */
+left: 0;
+background-color: #000000;
+padding: 0;
+margin: 0;
+border-radius: 5px;
+box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+width: auto;
+min-width: fit-content;
+z-index: 1000; /* Garante que o submenu ficará sobre outros elementos */
+}
+
+/* Exibição do submenu quando passar o mouse sobre "OBRAS" */
+.has-submenu:hover #submenu_obras {
+display: block;
+}
+
+/* Estilo para os itens do submenu */
+#submenu_obras li a {
+display: block;
+padding: 5px 10px;
+text-decoration: none;
+color: white;
+transition: background-color 0.3s ease;
+}
+
+/* Hover nos itens do submenu */
+#submenu_obras li a:hover {
+background-color: #ffffff;
+color: black;
+}
+
+#user-name{
+color: white;
+}
+
+/* DIV 1 */
+.container {
+width: 100%;
+height: 300px; /* Altura da sua div principal */
+background-image: url("../assets/images/Obras-Paralisadas-2021.jpg"); /* URL da sua imagem de fundo */
+background-size: cover; /* Ajusta a imagem para cobrir todo o container */
+position: relative; /* Importante para posicionar o quadrado */
+}
+
+.square {
+width: 100%;
+height: 100%; /* Opcional: altura igual à do container */
+background-color: rgba(0, 0, 0, 0.753); /* Cor de fundo branca com 50% de opacidade */
+position: absolute; /* Posiciona o quadrado dentro do container */
+left: 0; /* Alinha o quadrado à esquerda */
+display: flex; /* Centraliza o texto verticalmente */
+justify-content: center; /* Centraliza o texto horizontalmente */
+display: flex;
+flex-direction: column; /* Organiza os elementos em coluna */
+align-items: center; /* Centraliza o texto horizontalmente */
+text-align: center;
+}
+
+.square p {
+color: #ffffff; /* Cor do texto */
+font-size: 23px;
+text-align: center;
+margin-bottom: 0%;
+}
+
+/* Tabela Obras no sistema */
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+}
+
+table {
+width: 90%;
+margin: 10px auto;
+border-collapse: collapse;
+}
+
+th, td {
+border: 1px solid black;
+padding: 10px;
+text-align: center;
+}
+
+.invisible {
+border: none;
+background-color: transparent;
+}
+
+.header-row td:not(.invisible) {
+background-color: blue;
+color: white;
+font-weight: bold;
+}
+
+.total-row td:not(.invisible), .region-cell {
+background-color: rgb(255, 94, 0);
+font-weight: bold;
+}
+
+/* DIV OBRAS RECENTES */
+.obras-recentes-container {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 80%;
+margin: 20px auto;
+}
+
+.obras-recentes {
+display: flex;
+overflow: hidden;
+width: 80%;
+justify-content: space-between;
+}
+
+.obra {
+width: 30%;
+background-color: #f4f4f4;
+padding: 10px;
+border-radius: 5px;
+text-align: center;
+}
+
+.obra img {
+width: 100%;
+height: auto;
+border-radius: 5px;
+}
+
+.btn {
+background-color: gray;
+color: white;
+border: none;
+padding: 10px;
+cursor: pointer;
+font-size: 16px;
+}
+
+.btn:disabled {
+background-color: lightgray;
+cursor: default;
+}
+
+
+/* Estilo para o item com o nome do usuário */
+.has-submenu2 {
+  position: relative;
+}
+
+/* Ícone da seta ao lado do nome do usuário */
+.arrow-icon {
+  font-size: 12px; /* Tamanho pequeno da seta */
+  margin-left: 5px; /* Espaçamento entre o nome do usuário e a seta */
+}
+
+/* Estilo para o submenu */
+.submenu2 {
+  display: none; /* Esconde o submenu inicialmente */
+  position: absolute;
+  top: 100%; /* Coloca o submenu logo abaixo do nome do usuário */
+  left: 0;
+  background-color: #000000;
+  padding: 0;
+  margin: 0;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+/* Exibição do submenu ao passar o mouse sobre o nome do usuário */
+.has-submenu2:hover .submenu2 {
+  display: block;
+}
+
+/* Estilo para os itens dentro do submenu */
+.submenu2 li a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover nos itens do submenu */
+.submenu2 li a:hover {
+  background-color: #ffffff;
+  color: black;
+}
+
+/* Estilo do botão de "Sair" */
+#logout-button a {
+  padding: 10px 15px;
+  background-color: #ff0e06; /* Cor vermelha para o botão de sair */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Hover do botão de "Sair" */
+#logout-button a:hover {
+  background-color: #ff0c048a; /* Cor mais escura no hover */
+}
+
+.menu {
+  list-style: none; /* Remove os marcadores */
+  padding: 0; /* Remove o padding */
+  margin: 0; /* Remove a margem */
+  display: flex; /* Flexbox para garantir alinhamento horizontal */
+}
+
+/* Estilo para os itens de menu */
+.menu li {
+  position: relative; /* Necessário para os submenus */
+}
+
+/* Estilo para os links dentro do menu */
+.menu li a {
+  display: block;
+  padding: 10px 10px;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 16px;
+  white-space: nowrap; /* Evita quebras de linha no nome do usuário */
+
+}
+
+.submenu2, #submenu_obras {
+  display: none;
+}
+
+.show {
+  display: block !important;
+}
