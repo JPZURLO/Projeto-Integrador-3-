@@ -8,7 +8,7 @@ function carregarObras() {
             if (Array.isArray(data.obras)) {
                 obras = data.obras.map(obra => {
                     console.log('Imagens da obra:', obra.Imagens);
-                    
+
                     const imagens = Array.isArray(obra.Imagens) ? obra.Imagens : [obra.Imagens];
 
                     const imagensUrls = imagens.map(imagem => {
@@ -17,8 +17,9 @@ function carregarObras() {
                         return imgUrl;
                     });
 
+                    // Modifique para acessar obra.Id com "I" maiúsculo
                     return {
-                        id: obra.id, // Adiciona o ID da obra para redirecionamento
+                        id: obra.Id, // Corrigido
                         imgs: imagensUrls
                     };
                 });
@@ -34,24 +35,34 @@ function atualizarExibicao() {
     let container = document.getElementById("obras-container");
     container.innerHTML = "";
 
-    for (let i = index; i < index + 3 && i < obras.length; i++) {
-        let obraDiv = document.createElement("div");
-        obraDiv.classList.add("obra");
+    for (let i = 0; i < obras.length; i++) {
+        console.log(obras[i]);
+        console.log(obras[i].id);
+        const obraId = obras[i].id;
+        const botaoEditar = `<button class="editar-obra" id="editar-obra-${obraId}">Editar</button>`;
 
-        let imagensHTML = obras[i].imgs.map(imgSrc => {
-            return `<img src="${imgSrc}" alt="Imagem da Obra" onError="this.onerror=null;this.src='http://localhost:5500/default_image.png';">`;
-        }).join("");
-
-        // Adiciona o botão de editar sobre a imagem
-        let botaoEditar = `<span class="editar-obra" onclick="redirecionarParaEdicao(${obras[i].id})">Editar</span>`;
-
-        obraDiv.innerHTML = botaoEditar + imagensHTML;
+        const obraDiv = document.createElement("div");
+        obraDiv.classList.add("obra-container");
+        obraDiv.innerHTML = `
+            <img src="${obras[i].imgs[0]}" alt="Imagem da Obra" data-obra-id="${obraId}" onError="this.onerror=null;this.src='http://localhost:5500/default_image.png';">
+            <span style="position: absolute; top: 10px; left: 10px; color: white; background-color: rgba(0, 0, 0, 0.5); padding: 5px;">${obraId}</span>
+            ${botaoEditar}
+        `;
         container.appendChild(obraDiv);
     }
 }
 
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('editar-obra')) {
+        const obraId = event.target.id.split('-')[2];
+        if (obraId) {
+            redirecionarParaEdicao(obraId);
+        }
+    }
+});
+
 function redirecionarParaEdicao(obraId) {
-    window.location.href = `EdiçãoDeObras.html?id=${obraId}`;
+    window.location.href = `http://127.0.0.1:5501/FRONT/html/telaEdicaoDeObras.html?id=${obraId}`;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

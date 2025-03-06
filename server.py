@@ -239,22 +239,28 @@ def obras_editar():
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
 
-        # Modificando a query para retornar apenas as imagens das obras
+        print("Executando a consulta SQL...")  # Adicionado print()
         cursor.execute("""
-            SELECT Imagens
+            SELECT Id, Imagens
             FROM obras
-            ORDER BY id DESC
+            ORDER BY Id DESC
         """)
         obras = cursor.fetchall()
+
+        print("Dados recuperados do banco de dados:")  # Adicionado print()
+        print(obras)  # Adicionado print()
 
         cursor.close()
         db.close()
 
-        # Modificando a resposta para retornar apenas as imagens
+        print("Dados que serão enviados na resposta da API:")  # Adicionado print()
+        print(obras)  # Adicionado print()
+
         return jsonify({
             'obras': obras
         })
     except Exception as e:
+        print("Erro:", e)  # Adicionado print()
         return jsonify({'error': str(e)}), 500
 
     
@@ -271,6 +277,30 @@ def logout():
 @app.route('/tela_pos_login')
 def tela_pos_login():
     return send_from_directory(os.path.join(app.static_folder, 'html'), 'tela_pos_login.html')
+
+@app.route('/obras/<int:obra_id>', methods=['GET'])
+def get_obra(obra_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # Modifique a consulta para retornar todos os campos
+        cursor.execute("SELECT * FROM obras WHERE Id = %s", (obra_id,))
+        obra = cursor.fetchone()
+
+        cursor.close()
+        db.close()
+
+        if obra:
+            return jsonify(obra)
+        else:
+            return jsonify({"error": "Obra não encontrada"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5500)
 
 #  Iniciar servidor
 if __name__ == '__main__':
