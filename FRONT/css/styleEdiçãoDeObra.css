@@ -253,3 +253,21 @@ body{
   padding: 5px 10px;
   cursor: pointer;
 }
+
+#imagens-existentes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+#imagens-existentes img {
+  border: 2px solid #aaa;
+  padding: 5px;
+  background-color: #f9f9f9;
+  max-width: 100px;
+  height: auto;
+  margin-right: 10px;
+}

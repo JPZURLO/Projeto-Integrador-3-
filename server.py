@@ -298,6 +298,50 @@ def get_obra(obra_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/obras/update/<int:id>', methods=['PUT'])
+def atualizar_obra(id):
+    data = request.get_json()
+
+    NomeDaObra = data['NomeDaObra']
+    Regiao = data['Regiao']
+    ClassificacaoDaObra = data['ClassificacaoDaObra']
+    DataDeInicio = data['DataDeInicio']
+    DataDeEntrega = data['DataDeEntrega']
+    Orcamento = data['Orcamento']
+    EngResponsavel = data['EngResponsavel']
+    Status = data['Status']
+    Descricao = data['Descricao']
+    imagens = data['Imagens']  # Supondo que você está recebendo as imagens no corpo da requisição
+
+    try:
+        # Conectar ao banco de dados
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        query = """
+        UPDATE obras
+        SET NomeDaObra = %s, Regiao = %s, ClassificacaoDaObra = %s, 
+            DataDeInicio = %s, DataDeEntrega = %s, Orcamento = %s, 
+            EngResponsavel = %s, Status = %s, Descricao = %s, Imagens = %s
+        WHERE id = %s;
+        """
+        values = (NomeDaObra, Regiao, ClassificacaoDaObra, DataDeInicio, 
+                  DataDeEntrega, Orcamento, EngResponsavel, Status, 
+                  Descricao, imagens, id)
+
+        cursor.execute(query, values)
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return jsonify({"message": "Obra atualizada com sucesso!"}), 200
+
+    except Exception as e:
+        db.rollback()  # Reverter transação em caso de erro
+        return jsonify({"message": f"Erro ao atualizar obra: {e}"}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5500)
