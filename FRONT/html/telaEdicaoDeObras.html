@@ -18,7 +18,7 @@
                     <a href="#" id="opcao_obra">OBRAS</a>
                     <ul id="submenu_obras" style="display: none;">
                         <li><a href="cadastrarObras.html">Cadastrar</a></li>
-                        <li><a href="alterar.html">Alterar</a></li>
+                        <li><a href="EdiçãoDeObras.html">Alterar</a></li>
                         <li><a href="consultar.html">Consultar</a></li>
                     </ul>
                 </li>
@@ -57,7 +57,8 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="classificacao">Classificação da Obra:</label>
-                <select id="classificacao" name="ClassificacaoDaObra" required></select>
+                <select id="classificacao" name="ClassificacaoDaObra" required>
+                    </select>
             </div>
             <div class="form-group">
                 <label for="data-inicio">Data de Início</label>
@@ -71,29 +72,33 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="orcamento">Orçamento Utilizado</label>
-                <input type="text" id="Orçamento" name="orcamento" required placeholder="Valor do orçamento" />
+                <input type="text" id="Orcamento" name="orcamento" required placeholder="Valor do orçamento" />
             </div>
             <div class="form-group">
                 <label for="engenheiro">Engenheiro Responsável</label>
                 <input type="text" id="engenheiro" name="EngResponsavel" required placeholder="Nome do engenheiro" />
             </div>
-            
+            <div class="form-group">
+                <label for="status">Status da Obra:</label>
+                <select id="status" name="Status" required>
+                    </select>
+            </div>
         </div>
         <div class="form-group">
             <label>Imagens Existentes</label>
             <div id="imagens-existentes"></div>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="imagens">Imagens (máximo 5)</label>
-                <input type="file" id="imagem" name="imagem" multiple accept="image/*" />
-            </div>
+        <div class="form-group">
+            <label for="imagens">Imagens (máximo 5)</label>
+            <input type="file" id="imagem" name="imagem" multiple accept="image/*" />
         </div>
         <div class="form-group">
             <label for="descricao">Descrição</label>
             <textarea id="descricao" name="Descricao" rows="5" required placeholder="Descrição detalhada da obra"></textarea>
         </div>
-        <button type="submit">Salvar Edição de Obra</button>
+        <div style="margin-top: 20px; text-align: center;">
+            <button type="submit">Salvar Edição de Obra</button>
+        </div>
     </form>
 
     <script src="../js/scriptMascaraOrcamento.js"></script>

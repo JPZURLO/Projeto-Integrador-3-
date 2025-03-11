@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Preencher opções do Status da Obra
         const statusSelect = document.getElementById("status");
-        statusSelect.innerHTML = "";  // Limpar qualquer conteúdo existente
+        if (!data.status || !Array.isArray(data.status)) {
+            throw new Error("A propriedade 'status' está ausente ou não é um array.");
+        }
 
         const uniqueStatus = new Map();  // Para garantir que os status são únicos
 
@@ -36,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 statusSelect.appendChild(option);
             }
         });
+
 
     } catch (error) {
         console.error("Erro ao carregar os dados:", error);

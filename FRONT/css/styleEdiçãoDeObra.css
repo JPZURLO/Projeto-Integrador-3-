@@ -254,6 +254,75 @@ body{
   cursor: pointer;
 }
 
+
+form {
+  padding: 20px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  flex: 1;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group:last-child {
+  margin-right: 0;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-group textarea {
+  width: 100%;
+}
+
+.form-group:nth-child(3n) {
+  margin-right: 0;
+}
+
+.form-group:nth-child(3n+1) {
+  margin-left: 0;
+}
+
+.form-group:last-child {
+  margin-right: 0;
+}
+
+.form-group:nth-child(3n) {
+  margin-right: 0;
+}
+
+.form-group:nth-child(3n+1) {
+  margin-left: 0;
+}
+
+.form-group:last-child {
+  margin-right: 0;
+}
+
+/* Estilos para a descrição e imagens ocuparem linhas inteiras */
+.form-group:has(textarea#descricao),
+.form-group:has(input[type="file"]) {
+  flex-basis: 100%;
+  margin-right: 0;
+}
+
 #imagens-existentes {
   display: flex;
   flex-wrap: wrap;

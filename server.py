@@ -11,7 +11,7 @@ import json  # Adicione esta linha
 
 
 app = Flask(__name__, static_folder='front-end')
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "PUT", "DELETE"])
 
 secretKey = 'suaChaveSecretaAqui'  # Troque por uma chave mais forte
 
@@ -132,7 +132,7 @@ def adicionar_obra():
         print(f"Status: {status_nome}")
         print(f"Data de início: {data_inicio}")
         print(f"Data de término: {data_termino}")
-        print(f"Orçamento utilizado: {orcamento_utilizado}")
+        print(f"Orcamento utilizado: {orcamento_utilizado}")
         print(f"Descrição: {descricao}")
         print(f"Engenheiro responsável: {engenheiro_responsavel}")
 
@@ -191,7 +191,7 @@ def adicionar_obra():
 
         import json
         cursor.execute("""
-            INSERT INTO obras (NomeDaObra, Regiao, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orçamento, EngResponsavel, DescricaoDaObra, Imagens)
+            INSERT INTO obras (NomeDaObra, Regiao, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Imagens)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio, data_termino, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
 
@@ -208,7 +208,29 @@ def adicionar_obra():
         print("Erro ao adicionar obra:", str(e))
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
-        
+    
+def obter_status_do_banco():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, Classificacao FROM status")  # Ajuste a consulta conforme sua estrutura de tabela
+        status_options = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return status_options
+    except Exception as e:
+        print("Erro ao obter status do banco de dados:", e)
+        return []
+    
+@app.route('/status', methods=['GET'])
+def get_status():
+    try:
+        # Supondo que você tenha uma função para obter o status do banco de dados
+        status_options = obter_status_do_banco()
+        return jsonify(status_options), 200
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 @app.route('/obras-recentes', methods=['GET'])
 def obras_recentes():
     try:
@@ -298,49 +320,85 @@ def get_obra(obra_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-@app.route('/obras/update/<int:id>', methods=['PUT'])
-def atualizar_obra(id):
-    data = request.get_json()
 
-    NomeDaObra = data['NomeDaObra']
-    Regiao = data['Regiao']
-    ClassificacaoDaObra = data['ClassificacaoDaObra']
-    DataDeInicio = data['DataDeInicio']
-    DataDeEntrega = data['DataDeEntrega']
-    Orcamento = data['Orcamento']
-    EngResponsavel = data['EngResponsavel']
-    Status = data['Status']
-    Descricao = data['Descricao']
-    imagens = data['Imagens']  # Supondo que você está recebendo as imagens no corpo da requisição
 
+@app.route('/obras/<int:obra_id>', methods=['PUT'])
+def atualizar_obra(obra_id):
     try:
-        # Conectar ao banco de dados
-        db = get_db_connection()
-        cursor = db.cursor()
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
 
-        query = """
-        UPDATE obras
-        SET NomeDaObra = %s, Regiao = %s, ClassificacaoDaObra = %s, 
-            DataDeInicio = %s, DataDeEntrega = %s, Orcamento = %s, 
-            EngResponsavel = %s, Status = %s, Descricao = %s, Imagens = %s
-        WHERE id = %s;
-        """
-        values = (NomeDaObra, Regiao, ClassificacaoDaObra, DataDeInicio, 
-                  DataDeEntrega, Orcamento, EngResponsavel, Status, 
-                  Descricao, imagens, id)
+        dados = request.get_json()
+        print("Dados recebidos:", dados)
 
-        cursor.execute(query, values)
-        db.commit()
+        # Obter imagens existentes
+        imagens_existentes = request.form.get('Imagens')
+        if imagens_existentes:
+            imagens_existentes = json.loads(imagens_existentes)
+        else:
+            imagens_existentes = []
 
+        # Obter novas imagens
+        novas_imagens = request.files.getlist('novasImagens')
+        novas_imagens_paths = []
+        imagens_hash = set()
+
+        for imagem in novas_imagens:
+            if imagem:
+                imagem_content = imagem.read()
+                imagem_hash = gerar_hash_imagem([imagem_content])
+                imagem.stream.seek(0)
+
+                if imagem_hash not in imagens_hash:
+                    imagens_hash.add(imagem_hash)
+                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
+                    imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    imagem.save(imagem_path)
+                    novas_imagens_paths.append(f"/uploads/{filename}")
+
+        # Combinar imagens
+        todas_imagens = imagens_existentes + novas_imagens_paths
+        for key, value in dados.items():
+            print(f"{key}: {value} ({type(value)})")
+
+        campos_necessarios = ['NomeDaObra', 'Regiao', 'ClassificacaoDaObra', 'DataDeInicio', 'DataDeEntrega', 'Orcamento', 'EngResponsavel', 'Status', 'DescricaoDaObra', 'Imagens']
+        for campo in campos_necessarios:
+            if campo not in dados:
+                print(f"O campo {campo} está ausente.")
+                return jsonify({'erro': f'O campo {campo} está ausente.'}), 400
+
+        sql = """UPDATE obras SET NomeDaObra=%s, Regiao=%s, ClassificacaoDaObra=%s,
+                 DataDeInicio=%s, DataDeEntrega=%s, Orcamento=%s, EngResponsavel=%s,
+                 Status=%s, DescricaoDaObra=%s, Imagens=%s WHERE Id=%s"""
+
+        valores = (
+            dados.get('NomeDaObra'),
+            dados.get('Regiao'),
+            dados.get('ClassificacaoDaObra'),
+            dados.get('DataDeInicio'),
+            dados.get('DataDeEntrega'),
+            dados.get('Orcamento'),
+            dados.get('EngResponsavel'),
+            dados.get('Status'),
+            dados.get('DescricaoDaObra'),
+            json.dumps(todas_imagens),  # Certifique-se de que o campo `Imagens` está presente
+            obra_id
+        )
+
+        print("Valores para atualizar no banco de dados:", valores)
+
+        cursor.execute(sql, valores)
+        conn.commit()
         cursor.close()
-        db.close()
+        conn.close()
 
-        return jsonify({"message": "Obra atualizada com sucesso!"}), 200
+        return jsonify({'mensagem': 'Obra atualizada com sucesso!'}), 200
 
     except Exception as e:
-        db.rollback()  # Reverter transação em caso de erro
-        return jsonify({"message": f"Erro ao atualizar obra: {e}"}), 500
+        print("Erro ao atualizar obra:", e)
+        return jsonify({'erro': str(e)}), 500
+
+
 
 
 if __name__ == '__main__':

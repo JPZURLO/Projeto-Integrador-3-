@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const orcamentoInput = document.getElementById('Orçamento');
+    const orcamentoInput = document.getElementById('Orcamento');
 
     if (orcamentoInput) {
         orcamentoInput.addEventListener('input', function () {

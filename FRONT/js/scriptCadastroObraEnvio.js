@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Validação do campo de orçamento
-        let orcamento = document.getElementById('Orçamento').value;
+        let orcamento = document.getElementById('Orcamento').value;
         if (!orcamento) {
             alert('O campo de orçamento é obrigatório!');
             return;  // Impede o envio do formulário se o campo estiver vazio
