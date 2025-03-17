@@ -213,7 +213,7 @@ def obter_status_do_banco():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id, Classificacao FROM status")  # Ajuste a consulta conforme sua estrutura de tabela
+        cursor.execute("SELECT id, Classificacao FROM statusdaobra")  # Correção aqui
         status_options = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -225,7 +225,6 @@ def obter_status_do_banco():
 @app.route('/status', methods=['GET'])
 def get_status():
     try:
-        # Supondo que você tenha uma função para obter o status do banco de dados
         status_options = obter_status_do_banco()
         return jsonify(status_options), 200
     except Exception as e:
@@ -349,6 +348,7 @@ def atualizar_obra(obra_id):
         novas_imagens_paths = []
         imagens_hash = set()
 
+
         for imagem in novas_imagens:
             if imagem:
                 imagem_content = imagem.read()  # Lê o conteúdo da imagem
@@ -362,9 +362,16 @@ def atualizar_obra(obra_id):
                     imagem.save(imagem_path)  # Salva a imagem
                     novas_imagens_paths.append(f"/uploads/{filename}")
 
-        # Combinar imagens existentes e novas
-        todas_imagens = imagens_existentes + novas_imagens_paths  # Combina as listas
+       # Combinar imagens existentes e novas (removendo duplicatas)
+        todas_imagens = list(set(imagens_existentes + novas_imagens_paths))
 
+        # Obter imagens a serem removidas
+        imagens_para_remover = json.loads(request.form.get('imagensParaRemover')) if request.form.get('imagensParaRemover') else []
+
+        # Filtrar imagens existentes
+        todas_imagens = [img for img in todas_imagens if img not in imagens_para_remover]
+
+        # Atualizar o banco de dados
         sql = """UPDATE obras SET NomeDaObra=%s, Regiao=%s, ClassificacaoDaObra=%s,
                  DataDeInicio=%s, DataDeEntrega=%s, Orcamento=%s, EngResponsavel=%s,
                  Status=%s, DescricaoDaObra=%s, Imagens=%s WHERE Id=%s"""
@@ -379,7 +386,7 @@ def atualizar_obra(obra_id):
             eng_responsavel,
             status,
             descricao_da_obra,
-            json.dumps(todas_imagens),  # Converte a lista combinada para JSON
+            json.dumps(todas_imagens),
             obra_id
         )
 

@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (obraId) {
         buscarObraPorId(obraId);
     }
-    
     preencherOpcoesDeStatus();
 });
 
@@ -210,9 +209,11 @@ function abrirModal(index) {
         document.getElementById('imagem-modal').src = imagensUrls[imagemAtual];
     };
 }
+let obraAtualizada = false; // Flag para indicar se a obra foi atualizada
 
 async function atualizarObra(obraId) {
-    const formData = new FormData();
+    const form = document.getElementById('formCadastroObra');
+    const formData = new FormData(form); // Cria FormData a partir do formulário
 
     // Adiciona os outros campos do formulário
     formData.append("NomeDaObra", document.getElementById("nome-da-obra").value);
@@ -251,32 +252,12 @@ async function atualizarObra(obraId) {
         if (response.ok) {
             const responseData = await response.json();
             console.log('Resposta JSON do servidor:', responseData);
-            alert('Obra atualizada com sucesso!');
-            window.location.href = 'tela_pos_login.html';
-        } else {
-            const responseText = await response.text();
-            console.error('Erro ao salvar a obra:', responseText);
-            alert('Erro ao salvar a obra: ' + responseText);
-        }
-    } catch (error) {
-        console.error('Erro ao enviar os dados para o servidor:', error);
-    }
 
-    console.log("Dados preparados para envio:", formData);
+            // Armazena o estado da atualização no localStorage
+            localStorage.setItem('obraAtualizada', 'true');
 
-    try {
-        const response = await fetch(`http://localhost:5500/obras/${obraId}`, {
-            method: 'PUT',
-            body: formData
-        });
-
-        console.log("Resposta do servidor:", response.status, response.statusText);
-
-        if (response.ok) {
-            const responseData = await response.json();
-            console.log('Resposta JSON do servidor:', responseData);
-            alert('Obra atualizada com sucesso!');
-            window.location.href = 'tela_pos_login.html';
+            // Recarrega a página
+            window.location.reload();
         } else {
             const responseText = await response.text();
             console.error('Erro ao salvar a obra:', responseText);
@@ -287,14 +268,52 @@ async function atualizarObra(obraId) {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
+    // Verifica se a obra foi atualizada
+    if (localStorage.getItem('obraAtualizada')) {
+        // Exibe a mensagem de sucesso
+        exibirMensagemSucesso();
+
+        // Remove o indicador do localStorage
+        localStorage.removeItem('obraAtualizada');
+    }
+
     const form = document.getElementById('formCadastroObra');
     const submitButton = form.querySelector('button[type="submit"]');
+    const novasImagensInput = document.getElementById('imagem');
+
+    form.addEventListener('submit', function (event) {
+        console.log('Evento submit acionado!');
+        event.preventDefault();
+    });
 
     if (submitButton) {
         submitButton.addEventListener('click', async (event) => {
-            event.preventDefault(); // Evita o envio automático do formulário
+            event.preventDefault();
             atualizarObra(obraId);
         });
     }
+
+    novasImagensInput.addEventListener('change', function (event) {
+        console.log('Evento change do input de arquivo acionado!');
+        // Se necessário, adicione aqui o código para criar um preview da imagem
+    });
 });
+
+function exibirMensagemSucesso() {
+    const mensagemSucesso = document.createElement('div');
+    mensagemSucesso.innerHTML = `
+        <div style="text-align: center; padding: 20px; background-color: #f0f0f0; border: 1px solid #ccc; margin-bottom: 20px;">
+            <h2>Obra atualizada com sucesso!</h2>
+            <button id="btnVoltarHome" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Voltar para a Tela Inicial</button>
+        </div>
+    `;
+
+    const form = document.getElementById('formCadastroObra');
+    form.parentNode.insertBefore(mensagemSucesso, form);
+
+    document.getElementById('btnVoltarHome').addEventListener('click', function() {
+        window.location.href = 'tela_pos_login.html';
+    });
+}
