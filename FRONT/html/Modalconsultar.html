@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/styleConsultaDeObra.css">
+</head>
+
+<body>
+    <header>
+        <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
+        <nav>
+            <ul class="menu">
+                <li><a href="./tela_pos_login.html" id="link-home">INÍCIO</a></li>
+                <li class="has-submenu">
+                    <a href="#" id="opcao_obra">OBRAS</a>
+                    <ul id="submenu_obras" style="display: none;">
+                        <li><a href="cadastrarObras.html">Cadastrar</a></li>
+                        <li><a href="EdiçãoDeObras.html">Alterar</a></li>
+                        <li><a href="Modalconsultar.html">Consultar</a></li>
+                    </ul>
+                </li>
+                <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="has-submenu2">
+                    <a href="javascript:void(0);" id="user-name-link">
+                        <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
+                    </a>
+                    <ul class="submenu2">
+                        <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="filtros">
+        <div class="filtros-exibidos">
+            <div class="filtro">
+                <label>Engenheiro Responsável</label>
+                <input type="text" id="engenheiro-responsavel">
+            </div>
+            <div class="filtro">
+                <label>Status da Obra</label>
+                <select id="status-obra"></select>
+            </div>
+            <div class="filtro">
+                <label>Região</label>
+                <select id="regiao"></select>
+            </div>
+            <div class="filtro">
+                <label>Classificação da Obra</label>
+                <select id="classificacao-obra"></select>
+            </div>
+            <div class="filtro">
+                <label>Orçamento</label>
+                <input type="text" id="orcamento">
+            </div>
+            <div class="filtro">
+                <label>Nome da Obra</label>
+                <input type="text" id="nome-obra">
+            </div>
+        </div>
+    </div>
+    <div id="obras-container" class="obras-container">
+        <!-- Aqui as obras serão carregadas dinamicamente -->
+    </div>
+
+    <script src="../js/scriptLogout.js"></script>
+    <script src="../js/scriptUserInfo.js"></script>
+    <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/scriptFiltrosTelaEdição.js"></script>
+    <script src="../js/telaDeVizualizaçãoDeObras.js"></script>
+
+</body>
+
+</html>

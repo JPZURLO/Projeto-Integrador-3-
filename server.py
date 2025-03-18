@@ -26,6 +26,54 @@ db_config = {
     'database': 'gestaopublicadigital'
 }
 
+@app.route('/obras-dados')
+def get_obras_dados():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT COUNT(*) as total FROM obras")
+        total_obras = cursor.fetchone()['total']
+
+        cursor.execute("""
+            SELECT c.TipoDeObra, COUNT(*) as quantidade
+            FROM obras o
+            JOIN classificacaodasobras c ON o.ClassificacaoDaObra = c.Id
+            GROUP BY c.TipoDeObra
+        """)
+        obras_por_tipo = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT r.Nome_Regiao, COUNT(*) as quantidade
+            FROM obras o
+            JOIN regioesbrasil r ON o.Regiao = r.Id
+            GROUP BY r.Nome_Regiao
+        """)
+        obras_por_regiao = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT r.Nome_Regiao, c.TipoDeObra, COUNT(*) as quantidade
+            FROM obras o
+            JOIN regioesbrasil r ON o.Regiao = r.Id
+            JOIN classificacaodasobras c ON o.ClassificacaoDaObra = c.Id
+            GROUP BY r.Nome_Regiao, c.TipoDeObra
+        """)
+        total_por_regiao_tipo = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            'totalObras': total_obras,
+            'obrasPorTipo': obras_por_tipo,
+            'obrasPorRegiao': obras_por_regiao,
+            'totalPorRegiaoTipo': total_por_regiao_tipo
+        })
+    except Exception as e:
+        print(f"Erro ao buscar dados: {e}")
+        return jsonify({'error': 'Erro ao buscar dados'}), 500
+
+
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
@@ -263,6 +311,36 @@ def obras_editar():
         print("Executando a consulta SQL...")  # Adicionado print()
         cursor.execute("""
             SELECT Id, Imagens
+            FROM obras
+            ORDER BY Id DESC
+        """)
+        obras = cursor.fetchall()
+
+        print("Dados recuperados do banco de dados:")  # Adicionado print()
+        print(obras)  # Adicionado print()
+
+        cursor.close()
+        db.close()
+
+        print("Dados que serão enviados na resposta da API:")  # Adicionado print()
+        print(obras)  # Adicionado print()
+
+        return jsonify({
+            'obras': obras
+        })
+    except Exception as e:
+        print("Erro:", e)  # Adicionado print()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/obras-consultar', methods=['GET'])
+def obras_consultar():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        print("Executando a consulta SQL...")  # Adicionado print()
+        cursor.execute("""
+            SELECT Id, NomeDaObra, Regiao, ClassificacaoDaObra, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Status, Imagens
             FROM obras
             ORDER BY Id DESC
         """)

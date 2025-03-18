@@ -19,7 +19,7 @@
                     <ul id="submenu_obras" style="display: none;">
                         <li><a href="cadastrarObras.html">Cadastrar</a></li>
                         <li><a href="EdiçãoDeObras.html">Alterar</a></li>
-                        <li><a href="consultar.html">Consultar</a></li>
+                        <li><a href="Modalconsultar.html">Consultar</a></li>
                     </ul>
                 </li>
                 <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
@@ -43,79 +43,78 @@
     <!DOCTYPE html>
     <html lang="pt-br">
 
-    <head>
-        <h2>Obras no Sistema</h2>
-        <table>
-            <tr class="header-row">
-                <td class="invisible"></td>
-                <td>Total de Obras</td>
-                <td>Residencial</td>
-                <td>Comercial</td>
-                <td>Industrial</td>
-            </tr>
-            <tr>
-                <td class="invisible"></td>
-                <td>Celula 1</td>
-                <td>Celula 2</td>
-                <td>Celula 3</td>
-                <td>Celula 4</td>
-            </tr>
-            <tr class="total-row">
-                <td class="invisible"></td>
-                <td>Total</td>
-                <td>Residencial</td>
-                <td>Comercial</td>
-                <td>Industrial</td>
-            </tr>
-            <tr>
-                <td class="region-cell">Sudeste</td>
-                <td>Celula 1</td>
-                <td>Celula 2</td>
-                <td>Celula 3</td>
-                <td>Celula 4</td>
-            </tr>
-            <tr>
-                <td class="region-cell">Sul</td>
-                <td>Celula 1</td>
-                <td>Celula 2</td>
-                <td>Celula 3</td>
-                <td>Celula 4</td>
-            </tr>
-            <tr>
-                <td class="region-cell">Norte</td>
-                <td>Celula 1</td>
-                <td>Celula 2</td>
-                <td>Celula 3</td>
-                <td>Celula 4</td>
-            </tr>
-            <tr>
-                <td class="region-cell">Nordeste</td>
-                <td>Celula 1</td>
-                <td>Celula 2</td>
-                <td>Celula 3</td>
-                <td>Celula 4</td>
-            </tr>
-            <tr>
-                <td class="region-cell">Centro-Oeste</td>
-                <td>Celula 1</td>
-                <td>Celula 2</td>
-                <td>Celula 3</td>
-                <td>Celula 4</td>
-            </tr>
-        </table>
+    <table>
+        <tr class="header-row">
+            <td class="invisible"></td>
+            <td>Total de Obras</td>
+            <td>Residencial</td>
+            <td>Comercial</td>
+            <td>Industrial</td>
+        </tr>
+        <tr>
+            <td class="invisible"></td>
+            <td id="total-obras"></td>
+            <td id="residencial-total"></td>
+            <td id="comercial-total"></td>
+            <td id="industrial-total"></td>
+        </tr>
+        <tr class="total-row">
+            <td class="invisible"></td>
+            <td>Total</td>
+            <td id="residencial-total-regiao"></td>
+            <td id="comercial-total-regiao"></td>
+            <td id="industrial-total-regiao"></td>
+        </tr>
+        <tr>
+            <td class="region-cell">Sudeste</td>
+            <td id="sudeste-total"></td>
+            <td id="sudeste-residencial"></td>
+            <td id="sudeste-comercial"></td>
+            <td id="sudeste-industrial"></td>
+        </tr>
+        <tr>
+            <td class="region-cell">Sul</td>
+            <td id="sul-total"></td>
+            <td id="sul-residencial"></td>
+            <td id="sul-comercial"></td>
+            <td id="sul-industrial"></td>
+        </tr>
+        <tr>
+            <td class="region-cell">Norte</td>
+            <td id="norte-total"></td>
+            <td id="norte-residencial"></td>
+            <td id="norte-comercial"></td>
+            <td id="norte-industrial"></td>
+        </tr>
+        <tr>
+            <td class="region-cell">Nordeste</td>
+            <td id="nordeste-total"></td>
+            <td id="nordeste-residencial"></td>
+            <td id="nordeste-comercial"></td>
+            <td id="nordeste-industrial"></td>
+        </tr>
+        <tr>
+            <td class="region-cell">Centro-Oeste</td>
+            <td id="centro-oeste-total"></td>
+            <td id="centro-oeste-residencial"></td>
+            <td id="centro-oeste-comercial"></td>
+            <td id="centro-oeste-industrial"></td>
+        </tr>
+    </table>
 
-        <h3>Obras Recentes</h3>
-        <div class="obras-recentes-container">
-            <button class="btn" id="prevBtn" onclick="mudarObras(-1)" disabled>&lt;</button>
-            <div class="obras-recentes" id="obrasRecentes"></div>
-            <button class="btn" id="nextBtn" onclick="mudarObras(1)">&gt;</button>
-        </div>
+    <h3>Obras Recentes</h3>
+    <div class="obras-recentes-container">
+        <button class="btn" id="prevBtn" onclick="mudarObras(-1)" disabled>&lt;</button>
+        <div class="obras-recentes" id="obrasRecentes"></div>
+        <button class="btn" id="nextBtn" onclick="mudarObras(1)">&gt;</button>
+    </div>
 
-        <script src="../js/scriptLogout.js"></script>
-        <script src="../js/scriptLogin.js"></script>
-        <script src="../js/scriptUserInfo.js"></script>
-        <script src="../js/scriptOpçõesObrasELogout.js"></script>
-        <script src="../js/ObrasRecentes.js"></script>
+    <script src="../js/scriptLogout.js"></script>
+    <script src="../js/scriptLogin.js"></script>
+    <script src="../js/scriptUserInfo.js"></script>
+    <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/ObrasRecentes.js"></script>
+    <script src="../js/TabelaObras.js"></script>
 
 </body>
 

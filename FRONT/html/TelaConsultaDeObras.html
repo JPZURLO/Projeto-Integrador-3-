@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Obras</title>
+    <link rel="stylesheet" href="../css/styleCadastroObras.css">
+</head>
+
+<body>
+    <header>
+        <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
+        <nav>
+            <ul class="menu">
+                <li><a href="./tela_pos_login.html" id="link-home">INÍCIO</a></li>
+                <li class="has-submenu">
+                    <a href="#" id="opcao_obra">OBRAS</a>
+                    <ul id="submenu_obras" style="display: none;">
+                        <li><a href="cadastrarObras.html">Cadastrar</a></li>
+                        <li><a href="EdiçãoDeObras.html">Alterar</a></li>
+                        <li><a href="Modalconsultar.html">Consultar</a></li>
+                    </ul>
+                </li>
+                <li><a href="#SERVIÇOS" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="has-submenu2">
+                    <a href="javascript:void(0);" id="user-name-link">
+                        <span id="user-name">Nome do Usuário</span>
+                    </a>
+                    <ul class="submenu2">
+                        <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="square">
+            <p>CONSULTA DE OBRAS</p>
+        </div>
+    </div>
+    <form id="formConsultaObra">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id">Código da Obra (ID)</label>
+                <input type="text" id="id" name="id" readonly placeholder="ID gerado automaticamente" />
+            </div>
+            <div class="form-group">
+                <label for="nome-da-obra">Nome da Obra</label>
+                <input type="text" id="nome-da-obra" name="NomeDaObra" readonly placeholder="Nome da obra" />
+            </div>
+            <div class="form-group">
+                <label for="regiao">Região:</label>
+                <select id="regiao" name="Regiao" disabled></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="classificacao">Classificação da Obra:</label>
+                <select id="classificacao" name="ClassificacaoDaObra" disabled></select>
+            </div>
+            <div class="form-group">
+                <label for="data-inicio">Data de Início</label>
+                <input type="date" id="data-inicio" name="DataDeInicio" readonly />
+            </div>
+            <div class="form-group">
+                <label for="data-fim">Data de Fim</label>
+                <input type="date" id="data-termino" name="DataDeEntrega" readonly />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="orcamento">Orçamento Utilizado</label>
+                <input type="text" id="Orcamento" name="orcamento" readonly placeholder="Valor do orçamento" />
+            </div>
+            <div class="form-group">
+                <label for="engenheiro">Engenheiro Responsável</label>
+                <input type="text" id="engenheiro" name="EngResponsavel" readonly placeholder="Nome do engenheiro" />
+            </div>
+            <div class="form-group">
+                <label for="status">Status da Obra:</label>
+                <select id="status" name="Status" disabled></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Imagens Existentes</label>
+            <div id="imagens-existentes"></div>
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="Descricao" rows="5" readonly placeholder="Descrição detalhada da obra"></textarea>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+            <button type="button" id="voltar-consulta">Voltar para Consulta</button>
+        </div>
+    </form>
+
+    <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.8);">
+        <span id="fechar-modal" style="color:white; cursor:pointer; position:absolute; top:10px; right:20px;">&times;</span>
+        <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+            <img id="imagem-modal" style="max-width:80%; max-height:80%;"/>
+        </div>
+        <button id="anterior" style="position:absolute; top:50%; left:10px; transform: translateY(-50%);">&#10094;</button>
+        <button id="proximo" style="position:absolute; top:50%; right:10px; transform: translateY(-50%);">&#10095;</button>
+    </div>
+
+    <script src="../js/scriptMascaraOrcamento.js"></script>
+    <script src="../js/scriptUserInfo.js"></script>
+    <script src="../js/scriptLogout.js"></script>
+    <script src="../js/scriptLogin.js"></script>
+    <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/scriptCarregamentodasOpçõesCadastroObra.js"></script>
+    <script src="../js/scriptConsultaDeObras.js"></script>
+</body>
+
+</html>

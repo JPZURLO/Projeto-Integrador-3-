@@ -6,7 +6,6 @@ function carregarObras() {
         .then(data => {
             if (Array.isArray(data.obras)) {
                 obras = data.obras.map(obra => {
-                    // Verifica se obra.Imagens é uma string JSON válida antes de converter
                     const imagens = obra.Imagens ? JSON.parse(obra.Imagens) : [];
                     const imagensUrls = imagens.map(imagem => `http://localhost:5500${imagem}`);
                     return { id: obra.Id, imgs: imagensUrls };
@@ -29,6 +28,7 @@ function atualizarExibicao() {
         botaoEditar.classList.add("editar-obra");
         botaoEditar.id = `editar-obra-${obraId}`;
         botaoEditar.textContent = "Editar";
+        botaoEditar.setAttribute("data-obra-id", obraId); // Armazena o ID em um atributo data
 
         const obraDiv = document.createElement("div");
         obraDiv.classList.add("obra-container");
@@ -43,18 +43,7 @@ function atualizarExibicao() {
         imagemExibida.alt = "Imagem da Obra";
         carouselContainer.appendChild(imagemExibida);
 
-        // Criando identificador visual
-        const obraIdLabel = document.createElement("span");
-        obraIdLabel.style.position = "absolute";
-        obraIdLabel.style.top = "10px";
-        obraIdLabel.style.left = "10px";
-        obraIdLabel.style.color = "white";
-        obraIdLabel.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-        obraIdLabel.style.padding = "5px";
-        obraIdLabel.textContent = obraId;
-
         obraDiv.appendChild(carouselContainer);
-        obraDiv.appendChild(obraIdLabel);
         obraDiv.appendChild(botaoEditar);
         container.appendChild(obraDiv);
 
@@ -78,7 +67,7 @@ function iniciarCarrossel(carouselContainer, imagensUrls) {
 
 document.addEventListener("click", function(event) {
     if (event.target.classList.contains("editar-obra")) {
-        const obraId = event.target.id.split("-")[2];
+        const obraId = event.target.getAttribute("data-obra-id"); // Obtém o ID do atributo data
         if (obraId) {
             redirecionarParaEdicao(obraId);
         }

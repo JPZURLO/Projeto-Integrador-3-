@@ -5,25 +5,16 @@ function carregarObras() {
     fetch('http://localhost:5500/obras-recentes')
         .then(response => response.json())
         .then(data => {
-            // Verifica se 'data.obras' é um array antes de tentar usar .map
             if (Array.isArray(data.obras)) {
                 obras = data.obras.map(obra => {
-                    console.log('Imagens da obra:', obra.Imagens); // Verificar o conteúdo de obra.Imagens
-                    
-                    // Certificar-se de que obra.Imagens é um array, se não, convertê-lo para array
-                    const imagens = Array.isArray(obra.Imagens) ? obra.Imagens : [obra.Imagens];
-
-                    // Concatenar corretamente a URL da imagem com a base
+                    console.log(obra.Imagens); // Verifique o conteúdo das imagens
+                    const imagens = obra.Imagens ? JSON.parse(obra.Imagens) : [];
                     const imagensUrls = imagens.map(imagem => {
-                        // Remove os caracteres extras e concatena corretamente
-                        const imgUrl = `http://localhost:5500${imagem.replace(/["\[\]]/g, '')}`;
-                        console.log('URL da Imagem:', imgUrl); // Debug para verificar a URL da imagem
-                        return imgUrl;
+                        return `http://localhost:5500${imagem.replace(/["\[\]]/g, '')}`;
                     });
-
                     return {
-                        imgs: imagensUrls, // Armazenando as URLs de todas as imagens
-                        desc: obra.DescricaoDaObra
+                        imgs: imagensUrls,
+                        desc: obra.DescricaoDaObra || 'Descrição não disponível'
                     };
                 });
                 atualizarExibicao();
@@ -38,20 +29,33 @@ function atualizarExibicao() {
     let container = document.getElementById("obrasRecentes");
     container.innerHTML = "";
 
-    // Adiciona as obras no container
     for (let i = index; i < index + 3 && i < obras.length; i++) {
         let obraDiv = document.createElement("div");
         obraDiv.classList.add("obra");
 
-        // Exibe todas as imagens da obra
-        let imagensHTML = obras[i].imgs.map(imgSrc => {
-            // Para cada imagem, cria um <img> e verifica se a URL está correta
-            return `<img src="${imgSrc}" alt="Imagem da Obra" onError="this.onerror=null;this.src='http://localhost:5500/default_image.png';">`;
-        }).join("");
+        // Cria um container para o carrossel
+        let carouselContainer = document.createElement("div");
+        carouselContainer.classList.add("carousel-container");
+
+        // Adiciona as imagens ao carrossel
+        obras[i].imgs.forEach(imgSrc => {
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            img.alt = "Imagem da Obra";
+            img.classList.add("imagem-carrossel");
+            carouselContainer.appendChild(img);
+        });
 
         // Adiciona a descrição da obra
-        obraDiv.innerHTML = `${imagensHTML}<p>${obras[i].desc}</p>`;
+        let descricao = document.createElement("p");
+        descricao.textContent = obras[i].desc;
+
+        obraDiv.appendChild(carouselContainer);
+        obraDiv.appendChild(descricao);
         container.appendChild(obraDiv);
+
+        // Inicia o carrossel para esta obra
+        iniciarCarrossel(carouselContainer);
     }
 
     // Habilita/desabilita os botões conforme o índice
@@ -59,13 +63,35 @@ function atualizarExibicao() {
     document.getElementById("nextBtn").disabled = index + 3 >= obras.length;
 }
 
-function mudarObras(direcao) {
-    index += direcao * 3;
-    // Evita que o índice ultrapasse os limites da lista de obras
-    index = Math.max(0, Math.min(index, obras.length - 3));
-    atualizarExibicao();
+function iniciarCarrossel(carouselContainer) {
+    let imagens = carouselContainer.querySelectorAll(".imagem-carrossel");
+    let indiceAtual = 0;
+
+    // Exibe a primeira imagem
+    imagens[indiceAtual].classList.add("imagem-ativa");
+
+    setInterval(() => {
+        // Remove a classe da imagem atual
+        imagens[indiceAtual].classList.remove("imagem-ativa");
+
+        // Atualiza o índice
+        indiceAtual = (indiceAtual + 1) % imagens.length;
+
+        // Adiciona a classe à próxima imagem
+        imagens[indiceAtual].classList.add("imagem-ativa");
+    }, 10000); // 5000 milissegundos = 5 segundos
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     carregarObras();
+
+    // Adiciona eventos aos botões de navegação
+    document.getElementById("prevBtn").addEventListener("click", () => mudarObras(-1));
+    document.getElementById("nextBtn").addEventListener("click", () => mudarObras(1));
 });
+
+function mudarObras(direcao) {
+    index += direcao * 3;
+    index = Math.max(0, Math.min(index, obras.length - 3));
+    atualizarExibicao();
+}
