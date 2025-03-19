@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <link rel="stylesheet" href="../css/styleRelatorios.css">
+</head>
+
+<body>
+    <header>
+        <img src="../assets/images/logo-superior.png" alt="Logo da sua empresa" class="logo">
+        <nav>
+            <ul class="menu">
+                <li><a href="./tela_pos_login.html" id="link-home">INÍCIO</a></li>
+                <li class="has-submenu">
+                    <a href="#" id="opcao_obra">OBRAS</a>
+                    <ul id="submenu_obras" style="display: none;">
+                        <li><a href="cadastrarObras.html">Cadastrar</a></li>
+                        <li><a href="EdiçãoDeObras.html">Alterar</a></li>
+                        <li><a href="Modalconsultar.html">Consultar</a></li>
+                    </ul>
+                </li>
+                <li><a href="Relatorios.html" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="has-submenu2">
+                    <a href="javascript:void(0);" id="user-name-link">
+                        <span id="user-name">Nome do Usuário</span>
+                    </a>
+                    <ul class="submenu2">
+                        <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Gerar Relatório de Obras</h1>
+        <div class="form-group">
+            <div class="campo">
+                <label for="data-inicial">Data Inicial:</label>
+                <input type="date" id="data-inicial" required>
+            </div>
+            <div class="campo">
+                <label for="data-final">Data Final:</label>
+                <input type="date" id="data-final" required>
+            </div>
+            <div class="campo">
+                <label for="formato-relatorio">Escolha o formato do relatório:</label>
+                <select id="formato-relatorio">
+                    <option value="pdf">PDF</option>
+                    <option value="excel">Excel</option>
+                </select>
+            </div>
+        </div>
+        <button id="extrair-relatorio" type="submit">Extrair Relatório</button>
+        <form id="form-relatorio">
+            <input type="file" id="arquivo-excel" accept=".xlsx, .xls">
+            <button id="anexar-excel" type="button">Anexar Obras por Excel</button>
+        </form>
+    </main>
+    <div id="lista-obras"></div>
+    <div id="paginacao"></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    
+    <script src="../js/scriptLogout.js"></script>
+    <script src="../js/scriptUser Info.js"></script>
+    <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/scriptRelatorios.js"></script>
+</body>
+
+</html>

@@ -1,55 +1,40 @@
 body{
-    margin: 0%;
+  margin: 0%;
+}
+
+/* Navegação- logo e opções */
+header {
+  display: flex; /* Ativa o Flexbox para o header */
+  justify-content: space-between; /* Distribui os itens ao longo do header */
+  align-items: center; /* Alinha os itens verticalmente ao centro */
+  padding-right: 10px;
+  background-color: black;
+}
+
+nav ul {
+  list-style: none; /* Remove os marcadores de lista */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Ativa o Flexbox para a lista de navegação */
+}
+
+nav li {
+  position: relative;
+  margin-left: 30px;
+  margin-right: 30px;
+  display: block; /* Isso garante que o submenu apareça abaixo */
   }
   
-  /* Navegação- logo e opções */
-  header {
-    display: flex; /* Ativa o Flexbox para o header */
-    justify-content: space-between; /* Distribui os itens ao longo do header */
-    align-items: center; /* Alinha os itens verticalmente ao centro */
-    padding-right: 10px;
-    background-color: black;
+  nav a {
+  text-decoration: none;
+  color: white;
+  padding: 10px 0; /* Ajusta a altura para ficar igual aos outros itens */
+  display: flex; /* Permite alinhar o ícone e o texto */
+  align-items: center;
   }
-
-  nav ul {
-    list-style: none; /* Remove os marcadores de lista */
-    margin: 0;
-    padding: 0;
-    display: flex; /* Ativa o Flexbox para a lista de navegação */
-  }
-
-  nav li {
-    position: relative;
-    margin-left: 30px;
-    margin-right: 30px;
-    display: block; /* Isso garante que o submenu apareça abaixo */
-    }
-    
-    nav a {
-    text-decoration: none;
-    color: white;
-    padding: 10px 0; /* Ajusta a altura para ficar igual aos outros itens */
-    display: flex; /* Permite alinhar o ícone e o texto */
-    align-items: center;
-    }
-    
-    /* Estilo para o item do submenu */
-    .has-submenu > a {
-    display: flex;
-    align-items: center;
-    padding: 5px 10px; /* Adicionado padding para garantir que o tamanho seja consistente */
-    }
-    
-    /* Ícone indicando que há submenu */
-    .has-submenu > a::after {
-    content: " ▼"; /* Pequeno ícone de seta */
-    font-size: 15px;
-    margin-left: 2px;
-    }
-    
-    /* Estilização do submenu */
-    /* Estilo para o item do submenu */
-.has-submenu > a {
+  
+  /* Estilo para o item do submenu */
+  .has-submenu > a {
   display: flex;
   align-items: center;
   padding: 5px 10px; /* Adicionado padding para garantir que o tamanho seja consistente */
@@ -63,297 +48,324 @@ body{
   }
   
   /* Estilização do submenu */
-  #submenu_obras {
-  display: none; /* Esconde o submenu inicialmente */
-  position: absolute; /* Posiciona o submenu fora do header, abaixo do item */
-  top: 100%; /* Coloca o submenu logo abaixo do item "OBRAS" */
-  left: 0;
-  background-color: #000000;
-  padding: 0;
-  margin: 0;
-  border-radius: 5px;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-  width: auto;
-  min-width: fit-content;
-  z-index: 1000; /* Garante que o submenu ficará sobre outros elementos */
-  }
-  
-  /* Exibição do submenu quando passar o mouse sobre "OBRAS" */
-  .has-submenu:hover #submenu_obras {
-  display: block;
-  }
-  
-  /* Estilo para os itens do submenu */
-  #submenu_obras li a {
-  display: block;
-  padding: 5px 10px;
-  text-decoration: none;
-  color: white;
-  transition: background-color 0.3s ease;
-  }
-  
-  /* Hover nos itens do submenu */
-  #submenu_obras li a:hover {
-  background-color: #ffffff;
-  color: black;
-  }
+  /* Estilo para o item do submenu */
+.has-submenu > a {
+display: flex;
+align-items: center;
+padding: 5px 10px; /* Adicionado padding para garantir que o tamanho seja consistente */
+}
 
-  /* Estilo para o item com o nome do usuário */
+/* Ícone indicando que há submenu */
+.has-submenu > a::after {
+content: " ▼"; /* Pequeno ícone de seta */
+font-size: 15px;
+margin-left: 2px;
+}
+
+/* Estilização do submenu */
+#submenu_obras {
+display: none; /* Esconde o submenu inicialmente */
+position: absolute; /* Posiciona o submenu fora do header, abaixo do item */
+top: 100%; /* Coloca o submenu logo abaixo do item "OBRAS" */
+left: 0;
+background-color: #000000;
+padding: 0;
+margin: 0;
+border-radius: 5px;
+box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+width: auto;
+min-width: fit-content;
+z-index: 1000; /* Garante que o submenu ficará sobre outros elementos */
+}
+
+/* Exibição do submenu quando passar o mouse sobre "OBRAS" */
+.has-submenu:hover #submenu_obras {
+display: block;
+}
+
+/* Estilo para os itens do submenu */
+#submenu_obras li a {
+display: block;
+padding: 5px 10px;
+text-decoration: none;
+color: white;
+transition: background-color 0.3s ease;
+}
+
+/* Hover nos itens do submenu */
+#submenu_obras li a:hover {
+background-color: #ffffff;
+color: black;
+}
+
+/* Estilo para o item com o nome do usuário */
 .has-submenu2 {
-  position: relative;
+position: relative;
 }
 
 /* Ícone da seta ao lado do nome do usuário */
 .arrow-icon {
-  font-size: 12px; /* Tamanho pequeno da seta */
-  margin-left: 5px; /* Espaçamento entre o nome do usuário e a seta */
+font-size: 12px; /* Tamanho pequeno da seta */
+margin-left: 5px; /* Espaçamento entre o nome do usuário e a seta */
 }
 
 /* Estilo para o submenu */
 .submenu2 {
-  display: none; /* Esconde o submenu inicialmente */
-  position: absolute;
-  top: 100%; /* Coloca o submenu logo abaixo do nome do usuário */
-  left: 0;
-  background-color: #000000;
-  padding: 0;
-  margin: 0;
-  border-radius: 5px;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
+display: none; /* Esconde o submenu inicialmente */
+position: absolute;
+top: 100%; /* Coloca o submenu logo abaixo do nome do usuário */
+left: 0;
+background-color: #000000;
+padding: 0;
+margin: 0;
+border-radius: 5px;
+box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+z-index: 1000;
 }
 
 /* Exibição do submenu ao passar o mouse sobre o nome do usuário */
 .has-submenu2:hover .submenu2 {
-  display: block;
+display: block;
 }
 
 /* Estilo para os itens dentro do submenu */
 .submenu2 li a {
-  display: block;
-  padding: 5px 10px;
-  text-decoration: none;
-  color: white;
-  transition: background-color 0.3s ease;
+display: block;
+padding: 5px 10px;
+text-decoration: none;
+color: white;
+transition: background-color 0.3s ease;
 }
 
 /* Hover nos itens do submenu */
 .submenu2 li a:hover {
-  background-color: #ffffff;
-  color: black;
+background-color: #ffffff;
+color: black;
 }
 
 /* Estilo do botão de "Sair" */
 #logout-button a {
-  padding: 10px 15px;
-  background-color: #ff0e06; /* Cor vermelha para o botão de sair */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+padding: 10px 15px;
+background-color: #ff0e06; /* Cor vermelha para o botão de sair */
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 16px;
 }
 
 /* Hover do botão de "Sair" */
 #logout-button a:hover {
-  background-color: #ff0c048a; /* Cor mais escura no hover */
+background-color: #ff0c048a; /* Cor mais escura no hover */
 }
 
 .menu {
-  list-style: none; /* Remove os marcadores */
-  padding: 0; /* Remove o padding */
-  margin: 0; /* Remove a margem */
-  display: flex; /* Flexbox para garantir alinhamento horizontal */
+list-style: none; /* Remove os marcadores */
+padding: 0; /* Remove o padding */
+margin: 0; /* Remove a margem */
+display: flex; /* Flexbox para garantir alinhamento horizontal */
 }
 
 /* Estilo para os itens de menu */
 .menu li {
-  position: relative; /* Necessário para os submenus */
+position: relative; /* Necessário para os submenus */
 }
 
 /* Estilo para os links dentro do menu */
 .menu li a {
-  display: block;
-  padding: 10px 10px;
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 16px;
-  white-space: nowrap; /* Evita quebras de linha no nome do usuário */
+display: block;
+padding: 10px 10px;
+text-decoration: none;
+color: #ffffff;
+font-size: 16px;
+white-space: nowrap; /* Evita quebras de linha no nome do usuário */
 
 }
 
 .submenu2, #submenu_obras {
-  display: none;
+display: none;
 }
 
 .show {
-  display: block !important;
+display: block !important;
 }
 
 .filtros-exibidos {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 filtros por linha */
-  gap: 20px; /* Espaçamento entre os filtros */
-  margin-bottom: 20px;
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-top: 20px;
+display: grid;
+grid-template-columns: repeat(4, 1fr); /* 4 filtros por linha */
+gap: 20px; /* Espaçamento entre os filtros */
+margin-bottom: 20px;
+margin-left: 50px;
+margin-right: 50px;
+margin-top: 20px;
 }
 
 .filtro {
-  display: flex;
-  flex-direction: column;
+display: flex;
+flex-direction: column;
 }
 
 .filtro label {
-  font-size: 14px;
-  margin-bottom: 5px;
+font-size: 14px;
+margin-bottom: 5px;
 }
 
 .filtro input,
 .filtro select,
 .filtro textarea {
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+padding: 8px;
+font-size: 14px;
+border: 1px solid #ccc;
+border-radius: 4px;
 }
 
 @media (max-width: 768px) {
-  .filtros-exibidos {
-      grid-template-columns: repeat(2, 1fr); /* 2 filtros por linha em telas menores */
-  }
+.filtros-exibidos {
+    grid-template-columns: repeat(2, 1fr); /* 2 filtros por linha em telas menores */
+}
 }
 
 @media (max-width: 480px) {
-  .filtros-exibidos {
-      grid-template-columns: 1fr; /* 1 filtro por linha em telas muito pequenas */
-  }
+.filtros-exibidos {
+    grid-template-columns: 1fr; /* 1 filtro por linha em telas muito pequenas */
+}
 }
 
 
 /* Estilo para o contêiner de obras */
+#obras-container {
+display: flex;
+flex-wrap: wrap;
+}
+
 .obra-container {
-  position: relative; /* Contêiner relativo */
-  display: inline-block; /* Permite que os contêineres fiquem lado a lado */
-  margin: 10px; /* Adiciona margem entre os contêineres */
+width: 25%; /* Exibe 4 obras por linha */
+box-sizing: border-box;
+padding: 10px;
+position: relative;
 }
 
 .obra-container img {
-  display: block; /* Garante que a imagem ocupe todo o espaço do contêiner */
+width: 100%;
+height: auto;
 }
 
 .editar-obra {
-  position: absolute; /* Posicionamento absoluto dentro do contêiner */
-  top: 10px; /* Ajuste a posição vertical */
-  right: 10px; /* Ajuste a posição horizontal */
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
+position: absolute;
+top: 10px;
+right: 10px;
 }
 
+.editar-obra { /* Aplica os mesmos estilos para ambos os botões */
+position: absolute; /* Posicionamento absoluto dentro do contêiner */
+top: 10px; /* Ajuste a posição vertical */
+right: 10px; /* Ajuste a posição horizontal */
+background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+color: white;
+border: none;
+padding: 5px 10px;
+cursor: pointer;
+}
 
 form {
-  padding: 20px;
+padding: 20px;
 }
 
 .form-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+display: flex;
+justify-content: space-between;
+margin-bottom: 10px;
 }
 
 .form-group {
-  flex: 1;
-  margin-right: 10px;
-  display: flex;
-  flex-direction: column;
+flex: 1;
+margin-right: 10px;
+display: flex;
+flex-direction: column;
 }
 
 .form-group:last-child {
-  margin-right: 0;
+margin-right: 0;
 }
 
 .form-group label {
-  margin-bottom: 5px;
+margin-bottom: 5px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+padding: 8px;
+border: 1px solid #ccc;
+border-radius: 4px;
 }
 
 .form-group textarea {
-  width: 100%;
+width: 100%;
 }
 
 .form-group:nth-child(3n) {
-  margin-right: 0;
+margin-right: 0;
 }
 
 .form-group:nth-child(3n+1) {
-  margin-left: 0;
+margin-left: 0;
 }
 
 .form-group:last-child {
-  margin-right: 0;
+margin-right: 0;
 }
 
 .form-group:nth-child(3n) {
-  margin-right: 0;
+margin-right: 0;
 }
 
 .form-group:nth-child(3n+1) {
-  margin-left: 0;
+margin-left: 0;
 }
 
 .form-group:last-child {
-  margin-right: 0;
+margin-right: 0;
 }
 
 /* Estilos para a descrição e imagens ocuparem linhas inteiras */
 .form-group:has(textarea#descricao),
 .form-group:has(input[type="file"]) {
-  flex-basis: 100%;
-  margin-right: 0;
+flex-basis: 100%;
+margin-right: 0;
 }
 
 #imagens-existentes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  border: 2px solid #ccc;
-  padding: 10px;
-  margin-top: 10px;
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+border: 2px solid #ccc;
+padding: 10px;
+margin-top: 10px;
 }
 
 #imagens-existentes img {
-  border: 2px solid #aaa;
-  padding: 5px;
-  background-color: #f9f9f9;
-  max-width: 100px;
-  height: auto;
-  margin-right: 10px;
+border: 2px solid #aaa;
+padding: 5px;
+background-color: #f9f9f9;
+max-width: 100px;
+height: auto;
+margin-right: 10px;
 }
 
 
 #mensagem-sucesso {
-  text-align: center;
-  padding: 20px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  margin-top: 20px;
+text-align: center;
+padding: 20px;
+background-color: #f0f0f0;
+border: 1px solid #ccc;
+margin-top: 20px;
 }
 
 #btnVoltarHome {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
+padding: 10px 20px;
+background-color: #4CAF50;
+color: white;
+border: none;
+cursor: pointer;
 }

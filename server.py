@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import os
 import traceback
 import json  # Adicione esta linha
-
+from openpyxl import load_workbook
 
 
 
@@ -332,36 +332,6 @@ def obras_editar():
         print("Erro:", e)  # Adicionado print()
         return jsonify({'error': str(e)}), 500
 
-@app.route('/obras-consultar', methods=['GET'])
-def obras_consultar():
-    try:
-        db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
-
-        print("Executando a consulta SQL...")  # Adicionado print()
-        cursor.execute("""
-            SELECT Id, NomeDaObra, Regiao, ClassificacaoDaObra, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Status, Imagens
-            FROM obras
-            ORDER BY Id DESC
-        """)
-        obras = cursor.fetchall()
-
-        print("Dados recuperados do banco de dados:")  # Adicionado print()
-        print(obras)  # Adicionado print()
-
-        cursor.close()
-        db.close()
-
-        print("Dados que serão enviados na resposta da API:")  # Adicionado print()
-        print(obras)  # Adicionado print()
-
-        return jsonify({
-            'obras': obras
-        })
-    except Exception as e:
-        print("Erro:", e)  # Adicionado print()
-        return jsonify({'error': str(e)}), 500
-
     
 @app.route('/uploads/<filename>')
 def get_image(filename):
@@ -479,7 +449,146 @@ def atualizar_obra(obra_id):
         print("Erro ao atualizar obra:", e)
         return jsonify({'erro': str(e)}), 500
 
+@app.route('/obras-consultar', methods=['GET'])
+def obras_consultar():
+    try:
+        data_inicial_str = request.args.get('dataInicial')
+        data_final_str = request.args.get('dataFinal')
 
+        if not data_inicial_str or not data_final_str:
+            return jsonify({'error': 'Datas inicial e final são obrigatórias'}), 400
+
+        data_inicial = datetime.strptime(data_inicial_str, '%Y-%m-%d').date()
+        data_final = datetime.strptime(data_final_str, '%Y-%m-%d').date()
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT 
+                o.Id, 
+                o.NomeDaObra, 
+                r.Nome_Regiao AS Regiao, 
+                c.TipoDeObra AS ClassificacaoDaObra, 
+                o.DataDeInicio, 
+                o.DataDeEntrega, 
+                o.Orcamento, 
+                o.EngResponsavel, 
+                o.DescricaoDaObra, 
+                s.Classificacao AS Status,
+                o.Imagens
+            FROM obras o
+            JOIN regioesbrasil r ON o.Regiao = r.Id
+            JOIN classificacaodasobras c ON o.ClassificacaoDaObra = c.Id
+            JOIN statusdaobra s ON o.Status = s.Id
+            WHERE o.DataDeInicio >= %s AND o.DataDeInicio <= %s
+            ORDER BY o.Id DESC
+        """, (data_inicial, data_final))
+
+        obras = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+
+        return jsonify({'obras': obras})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+from datetime import datetime, timedelta
+
+@app.route('/obras-excel', methods=['POST'])
+def obras_excel():
+    try:
+        if 'arquivo' not in request.files:
+            return jsonify({'success': False, 'message': 'Nenhum arquivo enviado'})
+
+        arquivo = request.files['arquivo']
+        if arquivo.filename == '':
+            return jsonify({'success': False, 'message': 'Nenhum arquivo selecionado'})
+
+        if arquivo:
+            workbook = load_workbook(arquivo)
+            sheet = workbook.active
+            obras = []
+            headers = [cell.value for cell in sheet[1]]
+
+            for row in sheet.iter_rows(min_row=2):
+                obra = {}
+                for i, cell in enumerate(row):
+                    obra[headers[i]] = cell.value
+                obras.append(obra)
+
+            db = get_db_connection()
+            cursor = db.cursor()
+
+            for obra in obras:
+                nome_da_obra = obra.get('NomeDaObra')
+                regiao_nome = obra.get('Regiao')
+                classificacaoDaObra_nome = obra.get('ClassificacaoDaObra')
+                status_nome = obra.get('Status')
+                data_inicio = obra.get('DataDeInicio')
+                data_termino = obra.get('DataDeEntrega')
+                orcamento_utilizado = obra.get('Orcamento')
+                engenheiro_responsavel = obra.get('EngResponsavel')
+                descricao = obra.get('DescricaoDaObra')
+                imagens = obra.get('Imagens')
+
+                # Buscar ID da região
+                cursor.execute("SELECT id FROM regioesbrasil WHERE Nome_Regiao = %s", (regiao_nome,))
+                regiao_id = cursor.fetchone()
+                if regiao_id:
+                    regiao_id = regiao_id[0]
+                else:
+                    return jsonify({'success': False, 'message': f'Região "{regiao_nome}" não encontrada'})
+                cursor.fetchall()  # Descarta os resultados restantes
+                cursor.close()
+                cursor = db.cursor()
+
+                # Buscar ID da classificação
+                cursor.execute("SELECT id FROM classificacaodasobras WHERE TipoDeObra = %s", (classificacaoDaObra_nome,))
+                classificacao_id = cursor.fetchone()
+                if classificacao_id:
+                    classificacao_id = classificacao_id[0]
+                else:
+                    return jsonify({'success': False, 'message': f'Classificação "{classificacaoDaObra_nome}" não encontrada'})
+                cursor.fetchall()  # Descarta os resultados restantes
+                cursor.close()
+                cursor = db.cursor()
+
+                # Buscar ID do status
+                cursor.execute("SELECT id FROM statusdaobra WHERE Classificacao = %s", (status_nome,))
+                status_id = cursor.fetchone()
+                if status_id:
+                    status_id = status_id[0]
+                else:
+                    return jsonify({'success': False, 'message': f'Status "{status_nome}" não encontrado'})
+                cursor.fetchall()  # Descarta os resultados restantes
+                cursor.close()
+                cursor = db.cursor()
+
+                # Converter números de série para objetos datetime
+                if isinstance(data_inicio, int):
+                    data_inicio = datetime(1899, 12, 30) + timedelta(days=data_inicio)
+                if isinstance(data_termino, int):
+                    data_termino = datetime(1899, 12, 30) + timedelta(days=data_termino)
+
+                # Usar objetos datetime diretamente
+                data_inicio_obj = data_inicio.date()
+                data_termino_obj = data_termino.date()
+
+                cursor.execute("""
+                    INSERT INTO obras (NomeDaObra, Regiao, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Imagens)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio_obj, data_termino_obj, orcamento_utilizado, engenheiro_responsavel, descricao, imagens))
+
+            db.commit()
+            cursor.close()
+            db.close()
+
+            return jsonify({'success': True, 'message': 'Obras anexadas com sucesso!'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True, port=5500)
 

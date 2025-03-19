@@ -99,7 +99,6 @@ function aplicarFiltros() {
             (!regiao || obra.Regiao === parseInt(regiao)) && // Converte para número
             (!classificacao || obra.ClassificacaoDaObra === parseInt(classificacao)) && // Converte para número
             (!nomeObra || obra.NomeDaObra.toLowerCase().includes(nomeObra)) 
-            
         );
     });
     atualizarExibicao(obrasFiltradas);
@@ -112,24 +111,29 @@ function atualizarExibicao(obrasParaExibir) {
     obrasParaExibir.forEach(obra => {
         const obraDiv = document.createElement("div");
         obraDiv.classList.add("obra-container");
-        obraDiv.innerHTML = `
-            <div class="carousel-container">
-                <img src="${obra.imgs.length > 0 ? obra.imgs[0] : 'default.jpg'}" alt="Imagem da Obra">
-            </div>
-            <button class="consultar-obra" data-obra-id="${obra.id}">Consultar</button>
-        `;
+
+        // Criação do contêiner do carrossel
+        const carouselContainer = document.createElement("div");
+        carouselContainer.classList.add("carousel-container");
+        const imgElement = document.createElement("img");
+        imgElement.src = obra.imgs.length > 0 ? obra.imgs[0] : 'default.jpg';
+        carouselContainer.appendChild(imgElement);
+
+        // Adiciona o contêiner do carrossel e o botão ao contêiner da obra
+        obraDiv.appendChild(carouselContainer);
+        const editButton = document.createElement("button");
+        editButton.classList.add("editar-obra");
+        editButton.setAttribute("data-obra-id", obra.id);
+        editButton.textContent = "EDITAR";
+        obraDiv.appendChild(editButton);
         container.appendChild(obraDiv);
+
+        // Inicia o carrossel de imagens
+        if (obra.imgs.length > 1) { // Inicia o carrossel apenas se houver mais de uma imagem
+            iniciarCarrossel(carouselContainer, obra.imgs);
+        }
     });
 }
-
-document.addEventListener("click", function(event) {
-    if (event.target.classList.contains("consultar-obra")) {
-        const obraId = event.target.getAttribute("data-obra-id");
-        if (obraId) {
-            window.location.href = `http://127.0.0.1:5501/FRONT/html/telaConsultaDeObras.html?id=${obraId}`;
-        }
-    }
-});
 
 function iniciarCarrossel(carouselContainer, imagensUrls) {
     let imagemAtual = 0;
@@ -141,6 +145,7 @@ function iniciarCarrossel(carouselContainer, imagensUrls) {
         imagemExibida.src = imagensUrls[imagemAtual];
     }, 5000);
 }
+
 
 document.addEventListener("click", function(event) {
     if (event.target.classList.contains("editar-obra")) {
