@@ -39,6 +39,13 @@
             <p>CADASTRO DE OBRAS</p>
         </div>
     </div>
+    <form id="form-relatorio">
+        <input type="file" id="arquivo-excel" accept=".xlsx, .xls">
+        <button id="anexar-excel" type="button">Anexar Obras por Excel</button>
+        <a href="../assets/arquivos/PlanilhaExemplo.xlsx" download="ModeloCadastroObras.xlsx" style="display: block; margin-top: 8px; margin-left: 10px;">Baixe aqui o Modelo de Excel para Cadastrar Obras</a>
+
+    </form>
+
     <form action="/adicionar-obra" id="formCadastroObra" method="POST" enctype="multipart/form-data">
         <div class="form-row">
             <div class="form-group">
@@ -61,7 +68,7 @@
             </div>
             <div class="form-group">
                 <label for="data-inicio">Data de Início</label>
-<input type="date" id="data-inicio" name="DataDeInicio" required />
+                <input type="date" id="data-inicio" name="DataDeInicio" required />
             </div>
             <div class="form-group">
                 <label for="data-fim">Data de Fim</label>
@@ -90,7 +97,8 @@
         </div>
         <div class="form-group">
             <label for="descricao">Descrição</label>
-            <textarea id="descricao" name="Descricao" rows="5" required placeholder="Descrição detalhada da obra"></textarea>
+            <textarea id="descricao" name="Descricao" rows="5" required
+                placeholder="Descrição detalhada da obra"></textarea>
         </div>
         <button type="submit">Cadastrar Obra</button>
     </form>

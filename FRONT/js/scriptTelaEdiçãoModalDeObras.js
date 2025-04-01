@@ -2,14 +2,21 @@ let obras = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     carregarObras();
-    carregarOpcoesFiltros(); // Chama apenas uma vez
+    carregarOpcoesFiltros();
+    adicionarEstilosCSS(); // Adiciona os estilos CSS
     adicionarEventListeners();
 });
 
 function carregarObras() {
-    fetch('http://localhost:5500/obras-consultar')
-        .then(response => response.json())
+    fetch('http://localhost:5500/obras-editar')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log("Resposta da API:", data); // Adicionado log
             if (Array.isArray(data.obras)) {
                 obras = data.obras.map(obra => {
                     const imagens = obra.Imagens ? JSON.parse(obra.Imagens) : [];
@@ -23,9 +30,10 @@ function carregarObras() {
                         EngResponsavel: obra.EngResponsavel
                     };
                 });
-                aplicarFiltros();
+                atualizarExibicao(obras);
             } else {
                 console.error('Erro: "obras" não é um array ou não foi encontrado.');
+                // Adicione tratamento de erros aqui, se necessário
             }
         })
         .catch(error => console.error('Erro ao carregar obras:', error));
@@ -104,6 +112,22 @@ function aplicarFiltros() {
     atualizarExibicao(obrasFiltradas);
 }
 
+function adicionarEstilosCSS() {
+    const style = document.createElement("style");
+    style.textContent = `
+        .sem-imagem-texto {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 2em;
+            color: red;
+            font-weight: bold;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 function atualizarExibicao(obrasParaExibir) {
     let container = document.getElementById("obras-container");
     if (!container) return;
@@ -115,9 +139,24 @@ function atualizarExibicao(obrasParaExibir) {
         // Criação do contêiner do carrossel
         const carouselContainer = document.createElement("div");
         carouselContainer.classList.add("carousel-container");
-        const imgElement = document.createElement("img");
-        imgElement.src = obra.imgs.length > 0 ? obra.imgs[0] : 'default.jpg';
-        carouselContainer.appendChild(imgElement);
+
+        if (obra.imgs.length > 0) {
+            // Se houver imagens, exibe a primeira imagem
+            const imgElement = document.createElement("img");
+            imgElement.src = obra.imgs[0];
+            carouselContainer.appendChild(imgElement);
+
+            // Inicia o carrossel de imagens
+            if (obra.imgs.length > 1) {
+                iniciarCarrossel(carouselContainer, obra.imgs);
+            }
+        } else {
+            // Se não houver imagens, exibe apenas o texto
+            const semImagemTexto = document.createElement("div");
+            semImagemTexto.textContent = "OBRA SEM IMAGEM";
+            semImagemTexto.classList.add("sem-imagem-texto");
+            carouselContainer.appendChild(semImagemTexto);
+        }
 
         // Adiciona o contêiner do carrossel e o botão ao contêiner da obra
         obraDiv.appendChild(carouselContainer);

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 import jwt
 import mysql.connector
@@ -7,11 +7,9 @@ import os
 import traceback
 import json  # Adicione esta linha
 from openpyxl import load_workbook
-
-
-
-app = Flask(__name__, static_folder='front-end')
-CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST", "PUT", "DELETE"])
+from werkzeug.utils import secure_filename  # Adicione esta linha
+app = Flask(__name__, static_folder='FRONT/html', static_url_path='/FRONT/html')
+CORS(app, resources={r"/*": {"origins": ["*", "http://localhost:5501"]}}, methods=["GET", "POST", "PUT", "DELETE"])
 
 secretKey = 'suaChaveSecretaAqui'  # Troque por uma chave mais forte
 
@@ -79,9 +77,12 @@ def get_db_connection():
 
 import hashlib
 
-def gerar_hash_imagem(imagem):
-    hash_md5 = hashlib.md5(imagem).hexdigest()
-    return hash_md5
+def gerar_hash_imagem(imagens):
+    hashes = []
+    for imagem_content in imagens:
+        hash_md5 = hashlib.md5(imagem_content).hexdigest()
+        hashes.append(hash_md5)
+    return hashes
 
 def get_db_connection():
     return mysql.connector.connect(**db_config)
@@ -144,35 +145,36 @@ def cadastrar_obra():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+imagens_hash = set()  # Inicializa o conjunto fora da função
+
 @app.route('/adicionar-obra', methods=['POST'])
 def adicionar_obra():
     print("Início da função adicionar_obra")
     try:
         print("Dentro do bloco try")
-
         print("Dados recebidos do formulário:")
         print(request.form)
 
-        nome_da_obra = request.form.get('NomeDaObra') # Corrigido
+        nome_da_obra = request.form.get('NomeDaObra')
         regiao_nome = request.form.get('Regiao')
-        classificacao_nome = request.form.get('ClassificacaoDaObra') # Corrigido
+        classificacao_nome = request.form.get('ClassificacaoDaObra')
         status_nome = request.form.get('Status')
-        data_inicio = request.form.get('DataDeInicio') # Corrigido
-        data_termino = request.form.get('DataDeEntrega') # Corrigido
-        orcamento_utilizado = request.form.get('orcamento')  # Corrigido para 'orcamento'
+        data_inicio = request.form.get('DataDeInicio')  # Correção aqui
+        data_termino = request.form.get('DataDeEntrega')  # Correção aqui
+        orcamento_utilizado = request.form.get('orcamento')
         descricao = request.form.get('Descricao')
         engenheiro_responsavel = request.form.get('EngResponsavel')
 
         # Transformação do orçamento
-        orcamento_utilizado = orcamento_utilizado.replace('.', '')  # Remover os pontos
-        orcamento_utilizado = orcamento_utilizado.replace(',', '.')  # Substituir vírgula por ponto
+        orcamento_utilizado = orcamento_utilizado.replace('.', '')
+        orcamento_utilizado = orcamento_utilizado.replace(',', '.')
 
         # Garantir que o valor do orçamento seja um número válido
         try:
             orcamento_utilizado = float(orcamento_utilizado)
         except ValueError:
             raise ValueError("O valor do orçamento é inválido!")
-        
+
         print("Valores dos campos:")
         print(f"Nome da obra: {nome_da_obra}")
         print(f"Região: {regiao_nome}")
@@ -186,27 +188,35 @@ def adicionar_obra():
 
         imagens = request.files.getlist('imagem')
         imagem_paths = []
-        imagens_hash = set()
+        imagens_hash_existente = set() # Vamos usar um novo conjunto para verificar duplicidades nesta requisição
 
         for imagem in imagens:
             if imagem:
-                imagem_content = imagem.read()
-                imagem_hash = gerar_hash_imagem([imagem_content])
-                imagem.stream.seek(0)
+                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
+                imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                imagem.save(imagem_path)
+                imagem_paths.append(f"/uploads/{filename}")
 
-                if imagem_hash not in imagens_hash:
-                    imagens_hash.add(imagem_hash)
-                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
-                    imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    imagem.save(imagem_path)
-                    imagem_paths.append(f"/uploads/{filename}")
-        
-        data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
-        data_termino_obj = datetime.strptime(data_termino, '%Y-%m-%d').date()
+        if imagens_hash_existente:
+            return jsonify({'error': 'Uma ou mais imagens já foram cadastradas anteriormente.'}), 400
 
-        if data_termino_obj < data_inicio_obj:
+        data_inicio_obj = None
+        if data_inicio:
+            try:
+                data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            except ValueError:
+                return jsonify({'error': 'Formato de data de início inválido'}), 400
+
+        data_termino_obj = None
+        if data_termino:
+            try:
+                data_termino_obj = datetime.strptime(data_termino, '%Y-%m-%d').date()
+            except ValueError:
+                return jsonify({'error': 'Formato de data de término inválido'}), 400
+
+        if data_inicio_obj and data_termino_obj and data_termino_obj < data_inicio_obj:
             return jsonify({'error': 'A data de término não pode ser anterior à data de início.'}), 400
-        
+
         db = get_db_connection()
         cursor = db.cursor()
 
@@ -241,9 +251,8 @@ def adicionar_obra():
         cursor.execute("""
             INSERT INTO obras (NomeDaObra, Regiao, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Imagens)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio, data_termino, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
+        """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio_obj, data_termino_obj, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
 
-        
         db.commit()
         cursor.close()
         db.close()
@@ -256,7 +265,7 @@ def adicionar_obra():
         print("Erro ao adicionar obra:", str(e))
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
-    
+
 def obter_status_do_banco():
     try:
         conn = mysql.connector.connect(**db_config)
@@ -269,7 +278,7 @@ def obter_status_do_banco():
     except Exception as e:
         print("Erro ao obter status do banco de dados:", e)
         return []
-    
+
 @app.route('/status', methods=['GET'])
 def get_status():
     try:
@@ -332,7 +341,7 @@ def obras_editar():
         print("Erro:", e)  # Adicionado print()
         return jsonify({'error': str(e)}), 500
 
-    
+
 @app.route('/uploads/<filename>')
 def get_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -392,25 +401,24 @@ def atualizar_obra(obra_id):
         imagens_existentes = json.loads(resultado[0]) if resultado and resultado[0] else []
 
         # Obter novas imagens
-        novas_imagens = request.files.getlist('novasImagens')
+
+
         novas_imagens_paths = []
-        imagens_hash = set()
 
 
-        for imagem in novas_imagens:
+        imagens = request.files.getlist('imagem')
+        imagem_paths = []
+        print(f"Número de arquivos enviados: {len(imagens)}")
+
+        for imagem in imagens:
+            print(f"Processando arquivo: {imagem.filename}")
             if imagem:
-                imagem_content = imagem.read()  # Lê o conteúdo da imagem
-                imagem_hash = gerar_hash_imagem(imagem_content)  # Calcula o hash do conteúdo
+                filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
+                imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                imagem.save(imagem_path)
+                imagem_paths.append(f"/uploads/{filename}")
 
-                if imagem_hash not in imagens_hash:
-                    imagens_hash.add(imagem_hash)
-                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
-                    imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    imagem.seek(0)  # Reseta o ponteiro do arquivo para o início
-                    imagem.save(imagem_path)  # Salva a imagem
-                    novas_imagens_paths.append(f"/uploads/{filename}")
-
-       # Combinar imagens existentes e novas (removendo duplicatas)
+        # Combinar imagens existentes e novas (removendo duplicatas)
         todas_imagens = list(set(imagens_existentes + novas_imagens_paths))
 
         # Obter imagens a serem removidas
@@ -421,8 +429,8 @@ def atualizar_obra(obra_id):
 
         # Atualizar o banco de dados
         sql = """UPDATE obras SET NomeDaObra=%s, Regiao=%s, ClassificacaoDaObra=%s,
-                 DataDeInicio=%s, DataDeEntrega=%s, Orcamento=%s, EngResponsavel=%s,
-                 Status=%s, DescricaoDaObra=%s, Imagens=%s WHERE Id=%s"""
+                    DataDeInicio=%s, DataDeEntrega=%s, Orcamento=%s, EngResponsavel=%s,
+                    Status=%s, DescricaoDaObra=%s, Imagens=%s WHERE Id=%s"""
 
         valores = (
             nome_da_obra,
@@ -452,46 +460,31 @@ def atualizar_obra(obra_id):
 @app.route('/obras-consultar', methods=['GET'])
 def obras_consultar():
     try:
-        data_inicial_str = request.args.get('dataInicial')
-        data_final_str = request.args.get('dataFinal')
-
-        if not data_inicial_str or not data_final_str:
-            return jsonify({'error': 'Datas inicial e final são obrigatórias'}), 400
-
-        data_inicial = datetime.strptime(data_inicial_str, '%Y-%m-%d').date()
-        data_final = datetime.strptime(data_final_str, '%Y-%m-%d').date()
-
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
 
+        print("Executando a consulta SQL...")  # Adicionado print()
         cursor.execute("""
-            SELECT 
-                o.Id, 
-                o.NomeDaObra, 
-                r.Nome_Regiao AS Regiao, 
-                c.TipoDeObra AS ClassificacaoDaObra, 
-                o.DataDeInicio, 
-                o.DataDeEntrega, 
-                o.Orcamento, 
-                o.EngResponsavel, 
-                o.DescricaoDaObra, 
-                s.Classificacao AS Status,
-                o.Imagens
-            FROM obras o
-            JOIN regioesbrasil r ON o.Regiao = r.Id
-            JOIN classificacaodasobras c ON o.ClassificacaoDaObra = c.Id
-            JOIN statusdaobra s ON o.Status = s.Id
-            WHERE o.DataDeInicio >= %s AND o.DataDeInicio <= %s
-            ORDER BY o.Id DESC
-        """, (data_inicial, data_final))
-
+            SELECT Id, Imagens
+            FROM obras
+            ORDER BY Id DESC
+        """)
         obras = cursor.fetchall()
+
+        print("Dados recuperados do banco de dados:")  # Adicionado print()
+        print(obras)  # Adicionado print()
 
         cursor.close()
         db.close()
 
-        return jsonify({'obras': obras})
+        print("Dados que serão enviados na resposta da API:")  # Adicionado print()
+        print(obras)  # Adicionado print()
+
+        return jsonify({
+            'obras': obras
+        })
     except Exception as e:
+        print("Erro:", e)  # Adicionado print()
         return jsonify({'error': str(e)}), 500
 
 from datetime import datetime, timedelta
@@ -502,12 +495,12 @@ def obras_excel():
         if 'arquivo' not in request.files:
             return jsonify({'success': False, 'message': 'Nenhum arquivo enviado'})
 
-        arquivo = request.files['arquivo']
-        if arquivo.filename == '':
+        arquivo_excel = request.files['arquivo']
+        if arquivo_excel.filename == '':
             return jsonify({'success': False, 'message': 'Nenhum arquivo selecionado'})
 
-        if arquivo:
-            workbook = load_workbook(arquivo)
+        if arquivo_excel:
+            workbook = load_workbook(arquivo_excel)
             sheet = workbook.active
             obras = []
             headers = [cell.value for cell in sheet[1]]
@@ -533,6 +526,26 @@ def obras_excel():
                 descricao = obra.get('DescricaoDaObra')
                 imagens = obra.get('Imagens')
 
+                # Processar imagens
+                imagens = obra.get('Imagens')
+                links_imagens = []
+                if imagens:
+                    imagens_lista = imagens.split(',')
+                    for nome_imagem in imagens_lista:
+                        nome_imagem = nome_imagem.strip()
+                        caminho_imagem = os.path.join(os.path.dirname(arquivo_excel.filename), nome_imagem)
+                        if os.path.exists(caminho_imagem):
+                            nome_arquivo_unico = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{secure_filename(nome_imagem)}"
+                            caminho_destino = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo_unico)
+                            os.rename(caminho_imagem, caminho_destino)
+                            link_imagem = f"/uploads/{nome_arquivo_unico}"
+                            links_imagens.append(link_imagem)
+                            print(f"Imagem processada: {link_imagem}") # Adicione esta linha
+                        else:
+                            print(f"Imagem não encontrada: {nome_imagem}") # Adicione esta linha
+                imagens = str(links_imagens)
+                print(f"Links das imagens: {imagens}") # Adicione esta linha
+
                 # Buscar ID da região
                 cursor.execute("SELECT id FROM regioesbrasil WHERE Nome_Regiao = %s", (regiao_nome,))
                 regiao_id = cursor.fetchone()
@@ -540,7 +553,7 @@ def obras_excel():
                     regiao_id = regiao_id[0]
                 else:
                     return jsonify({'success': False, 'message': f'Região "{regiao_nome}" não encontrada'})
-                cursor.fetchall()  # Descarta os resultados restantes
+                cursor.fetchall()
                 cursor.close()
                 cursor = db.cursor()
 
@@ -551,7 +564,7 @@ def obras_excel():
                     classificacao_id = classificacao_id[0]
                 else:
                     return jsonify({'success': False, 'message': f'Classificação "{classificacaoDaObra_nome}" não encontrada'})
-                cursor.fetchall()  # Descarta os resultados restantes
+                cursor.fetchall()
                 cursor.close()
                 cursor = db.cursor()
 
@@ -562,7 +575,7 @@ def obras_excel():
                     status_id = status_id[0]
                 else:
                     return jsonify({'success': False, 'message': f'Status "{status_nome}" não encontrado'})
-                cursor.fetchall()  # Descarta os resultados restantes
+                cursor.fetchall()
                 cursor.close()
                 cursor = db.cursor()
 
@@ -588,9 +601,37 @@ def obras_excel():
             return jsonify({'success': True, 'message': 'Obras anexadas com sucesso!'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
-    
-if __name__ == '__main__':
-    app.run(debug=True, port=5500)
+
+@app.route('/download-modelo-excel')
+def download_modelo():
+    caminho_arquivo = os.path.join(app.root_path, 'FRONT', 'arquivos', 'PlanilhaExemplo.xlsx')
+    if os.path.exists(caminho_arquivo):
+        return send_file(caminho_arquivo, as_attachment=True, download_name='ModeloCadastroObras.xlsx')
+    else:
+        return "Arquivo não encontrado", 404
+
+@app.route('/obras/verificar-cadastro', methods=['GET'])
+def verificar_cadastro_obra():
+    nome = request.args.get('nome')
+    data_inicio = request.args.get('dataInicio')
+    print(f"\n--- /obras/verificar-cadastro (GET) --- Nome: {nome}, Data Início: {data_inicio}")
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM obras WHERE NomeDaObra = %s AND DataDeInicio = %s", (nome, data_inicio))
+        obra = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if obra:
+            print("Obra encontrada para verificação.")
+            return jsonify({'obraExiste': True})
+        else:
+            print("Obra não encontrada para verificação.")
+            return jsonify({'obraExiste': False})
+    except Exception as e:
+        print(f"Erro ao verificar cadastro da obra: {e}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 #  Iniciar servidor
 if __name__ == '__main__':

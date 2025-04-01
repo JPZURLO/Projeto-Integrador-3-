@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
-
     const form = document.getElementById('formCadastroObra');
-    const dataInicioInput = document.getElementById('data-inicio');
-    const dataTerminoInput = document.getElementById('data-termino');
+    const dataDeInicioInput = document.getElementById('data-inicio');
+    const dataDeEntregaInput = document.getElementById('data-termino');
     const submitButton = form.querySelector('button[type="submit"]');
     const errorMessage = document.createElement('span');
     errorMessage.style.color = 'red';
@@ -13,14 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    const dataTerminoInput = document.getElementById('data-termino'); // Correção do ID aqui
     if (dataTerminoInput) {
         dataTerminoInput.insertAdjacentElement('afterend', errorMessage);
     } else {
-        console.error("Erro: Campo de data final com ID 'data-termino' não encontrado!");
+        console.error("Erro: Campo de data final com ID 'DataDeEntrega' não encontrado!");
     }
 
-    if (dataInicioInput) {
-        dataInicioInput.addEventListener('input', function () {
+    if (dataDeInicioInput) {
+        dataDeInicioInput.addEventListener('input', function () {
             if (this.value) {
                 dataTerminoInput.removeAttribute('disabled');
             } else {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     } else {
-        console.error("Erro: Campo de data inicial com ID 'data-inicio' não encontrado!");
+        console.error("Erro: Campo de data inicial com ID 'DataDeInicio' não encontrado!");
     }
 
     if (dataTerminoInput) {
@@ -49,40 +49,32 @@ document.addEventListener('DOMContentLoaded', function () {
         let orcamento = document.getElementById('Orcamento').value;
         if (!orcamento) {
             alert('O campo de orçamento é obrigatório!');
-            return;  // Impede o envio do formulário se o campo estiver vazio
+            return;
         }
 
-        // Passo 1: Remover os pontos de milhar (.) 
-        orcamento = orcamento.replace(/\./g, '');
-
-        // Passo 2: Substituir a vírgula por ponto (para garantir o formato decimal correto)
-        orcamento = orcamento.replace(',', '.');
-
-        // Passo 3: Garantir que o valor seja um número válido
+        orcamento = orcamento.replace(/\./g, '').replace(',', '.');
         if (isNaN(orcamento)) {
             alert('O valor do orçamento é inválido!');
             return;
         }
 
-        // Agora orcamento está no formato correto para enviar para o backend
-        const formData = new FormData(form);
-        formData.append('orcamento', orcamento); // Certifique-se de adicionar o orcamento formatado
+        const formData = new FormData(form); // Inicializa o FormData com o formulário
+        formData.set('orcamento', orcamento); // Use set para substituir o valor do formulário pelo formatado
 
-
-        // Coletar os dados do formulário
         const imagemInput = document.getElementById('imagem');
-
-        // Validação das imagens
-        if (imagemInput && imagemInput.files.length > 0) {
-            for (const file of imagemInput.files) {
-                formData.append('imagem', file);
-            }
-        } else {
-            alert('Por favor, selecione pelo menos uma imagem!');
+        if (!imagemInput) {
+            console.error("Erro: Campo de imagem com ID 'imagem' não encontrado!");
+            alert('Erro: Campo de imagem não encontrado no formulário.');
             return;
         }
 
-        // Envio para o servidor
+        if (imagemInput.files.length > 0) {
+            formData.append('Imagem', imagemInput.files[0]);
+        } else {
+            alert('Por favor, selecione uma imagem!');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5500/adicionar-obra', {
                 method: 'POST',
@@ -97,14 +89,29 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Dados da resposta:', data);
 
             if (data.success) {
-                alert('Obra cadastrada com sucesso!');
-                if (data.redirect) {
-                    console.log(`Redirecionando para ${data.redirect}`);
-                    window.location.assign(data.redirect);  // Redirecionamento após sucesso
-                }
+                const nomeDaObra = document.getElementById('NomeDaObra').value;
+                const dataDeInicio = document.getElementById('DataDeInicio').value;
+
+                fetch(`/obras/verificar-cadastro?nome=${encodeURIComponent(nomeDaObra)}&dataInicio=${dataDeInicio}`)
+                    .then(responseVerificacao => responseVerificacao.json())
+                    .then(dataVerificacao => {
+                        if (dataVerificacao.obraExiste) {
+                            alert('Obra cadastrada com sucesso!');
+                            form.reset();
+                        } else {
+                            alert('Erro ao verificar o cadastro da obra. Por favor, tente novamente.');
+                            console.error('Erro na verificação do cadastro:', dataVerificacao);
+                        }
+                    })
+                    .catch(errorVerificacao => {
+                        console.error('Erro ao fazer a requisição de verificação:', errorVerificacao);
+                        alert('Erro ao verificar o cadastro da obra. Por favor, tente novamente.');
+                    });
             } else {
                 alert('Erro ao cadastrar obra.');
+                console.log("Resposta de erro recebida:", data);
             }
+
         } catch (error) {
             console.error('Erro:', error);
             alert('Erro ao enviar a obra. Verifique a conexão com o servidor.');
@@ -112,8 +119,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function validarDataFinal() {
-        const dataInicio = new Date(dataInicioInput.value);
-        const dataTermino = new Date(dataTerminoInput.value);
+        const dataInicio = new Date(dataDeInicioInput.value);
+        const dataTermino = new Date(dataDeEntregaInput.value);
 
         if (dataTermino < dataInicio) {
             errorMessage.textContent = 'A data final não pode ser anterior à data inicial. Mude por favor.';
@@ -126,3 +133,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+// Mantenha apenas um bloco para o listener do anexar-excel
+document.getElementById('anexar-excel').addEventListener('click', function() {
+    const arquivoExcel = document.getElementById('arquivo-excel').files[0];
+    if (!arquivoExcel) {
+        alert('Por favor, selecione um arquivo Excel.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('arquivo', arquivoExcel);
+
+    fetch('http://localhost:5500/obras-excel', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Obras anexadas com sucesso!');
+        } else {
+            alert(`Erro ao anexar obras: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao anexar obras:', error);
+        alert(`Ocorreu um erro ao anexar obras: ${error.message}`);
+    });
+});
+

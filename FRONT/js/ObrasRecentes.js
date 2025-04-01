@@ -1,6 +1,16 @@
 let obras = [];
 let index = 0;
 
+document.addEventListener('DOMContentLoaded', function () {
+    carregarObras();
+    adicionarEstilosCSS();
+
+    // Adiciona eventos aos botões de navegação
+    document.getElementById("prevBtn").addEventListener("click", () => mudarObras(-1));
+    document.getElementById("nextBtn").addEventListener("click", () => mudarObras(1));
+});
+
+
 function carregarObras() {
     fetch('http://localhost:5500/obras-recentes')
         .then(response => response.json())
@@ -25,6 +35,22 @@ function carregarObras() {
         .catch(error => console.error('Erro ao carregar obras recentes:', error));
 }
 
+function adicionarEstilosCSS() {
+    const style = document.createElement("style");
+    style.textContent = `
+        .sem-imagem-texto {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 2em;
+            color: red;
+            font-weight: bold;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 function atualizarExibicao() {
     let container = document.getElementById("obrasRecentes");
     container.innerHTML = "";
@@ -33,32 +59,33 @@ function atualizarExibicao() {
         let obraDiv = document.createElement("div");
         obraDiv.classList.add("obra");
 
-        // Cria um container para o carrossel
         let carouselContainer = document.createElement("div");
         carouselContainer.classList.add("carousel-container");
 
-        // Adiciona as imagens ao carrossel
-        obras[i].imgs.forEach(imgSrc => {
-            let img = document.createElement("img");
-            img.src = imgSrc;
-            img.alt = "Imagem da Obra";
-            img.classList.add("imagem-carrossel");
-            carouselContainer.appendChild(img);
-        });
+        if (obras[i].imgs.length > 0) {
+            obras[i].imgs.forEach(imgSrc => {
+                let img = document.createElement("img");
+                img.src = imgSrc;
+                img.alt = "Imagem da Obra";
+                img.classList.add("imagem-carrossel");
+                carouselContainer.appendChild(img);
+            });
+            iniciarCarrossel(carouselContainer);
+        } else {
+            let semImagemTexto = document.createElement("div");
+            semImagemTexto.textContent = "OBRA SEM IMAGEM";
+            semImagemTexto.classList.add("sem-imagem-texto");
+            carouselContainer.appendChild(semImagemTexto);
+        }
 
-        // Adiciona a descrição da obra
         let descricao = document.createElement("p");
         descricao.textContent = obras[i].desc;
 
         obraDiv.appendChild(carouselContainer);
         obraDiv.appendChild(descricao);
         container.appendChild(obraDiv);
-
-        // Inicia o carrossel para esta obra
-        iniciarCarrossel(carouselContainer);
     }
 
-    // Habilita/desabilita os botões conforme o índice
     document.getElementById("prevBtn").disabled = index === 0;
     document.getElementById("nextBtn").disabled = index + 3 >= obras.length;
 }
@@ -82,13 +109,6 @@ function iniciarCarrossel(carouselContainer) {
     }, 10000); // 5000 milissegundos = 5 segundos
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    carregarObras();
-
-    // Adiciona eventos aos botões de navegação
-    document.getElementById("prevBtn").addEventListener("click", () => mudarObras(-1));
-    document.getElementById("nextBtn").addEventListener("click", () => mudarObras(1));
-});
 
 function mudarObras(direcao) {
     index += direcao * 3;

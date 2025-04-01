@@ -369,3 +369,11 @@ color: white;
 border: none;
 cursor: pointer;
 }
+
+.obra-sem-imagem {
+  background-color: black; /* Fundo preto */
+  color: white; /* Texto branco */
+  padding: 20px; /* Espaçamento interno */
+  text-align: center; /* Centraliza o texto */
+  border-radius: 5px; /* Bordas arredondadas */
+}
