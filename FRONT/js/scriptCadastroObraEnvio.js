@@ -37,6 +37,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function validarDataFinal() {
+        const dataInicio = new Date(dataDeInicioInput.value);
+        const dataTermino = new Date(dataDeEntregaInput.value);
+
+        if (dataTermino < dataInicio) {
+            errorMessage.textContent = 'A data final não pode ser anterior à data inicial. Mude por favor.';
+            submitButton.disabled = true;
+            return false;
+        } else {
+            errorMessage.textContent = '';
+            submitButton.disabled = false;
+            return true;
+        }
+    }
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -76,62 +91,42 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
+            console.log('Enviando requisição...');
             const response = await fetch('http://localhost:5500/adicionar-obra', {
                 method: 'POST',
                 body: formData
             });
-
+            console.log('Resposta recebida (objeto Response):', response);
+    
             if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
+                console.log('Erro na resposta HTTP:', response.status);
+                const errorText = await response.text(); // Tenta obter o corpo da resposta de erro
+                console.log('Corpo da resposta de erro:', errorText);
+                throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
             }
-
+    
+            console.log('Tentando parsear JSON...');
             const data = await response.json();
-            console.log('Dados da resposta:', data);
-
+            console.log('JSON parseado:', data);
+    
             if (data.success) {
-                const nomeDaObra = document.getElementById('NomeDaObra').value;
-                const dataDeInicio = document.getElementById('DataDeInicio').value;
-
-                fetch(`/obras/verificar-cadastro?nome=${encodeURIComponent(nomeDaObra)}&dataInicio=${dataDeInicio}`)
-                    .then(responseVerificacao => responseVerificacao.json())
-                    .then(dataVerificacao => {
-                        if (dataVerificacao.obraExiste) {
-                            alert('Obra cadastrada com sucesso!');
-                            form.reset();
-                        } else {
-                            alert('Erro ao verificar o cadastro da obra. Por favor, tente novamente.');
-                            console.error('Erro na verificação do cadastro:', dataVerificacao);
-                        }
-                    })
-                    .catch(errorVerificacao => {
-                        console.error('Erro ao fazer a requisição de verificação:', errorVerificacao);
-                        alert('Erro ao verificar o cadastro da obra. Por favor, tente novamente.');
-                    });
+                console.log('Sucesso:', data);
+                alert(`Obra cadastrada com sucesso! ID: ${data.obra_id}`);
+                form.reset();
             } else {
+                console.log('Erro no backend:', data);
                 alert('Erro ao cadastrar obra.');
                 console.log("Resposta de erro recebida:", data);
             }
-
+    
         } catch (error) {
-            console.error('Erro:', error);
+            console.error('Erro no bloco catch:', error);
             alert('Erro ao enviar a obra. Verifique a conexão com o servidor.');
+        } finally {
+            console.log('Bloco finally executado (independentemente do resultado).');
         }
     });
-
-    function validarDataFinal() {
-        const dataInicio = new Date(dataDeInicioInput.value);
-        const dataTermino = new Date(dataDeEntregaInput.value);
-
-        if (dataTermino < dataInicio) {
-            errorMessage.textContent = 'A data final não pode ser anterior à data inicial. Mude por favor.';
-            submitButton.disabled = true;
-            return false;
-        } else {
-            errorMessage.textContent = '';
-            submitButton.disabled = false;
-            return true;
-        }
-    }
+    
 });
 
 // Mantenha apenas um bloco para o listener do anexar-excel
