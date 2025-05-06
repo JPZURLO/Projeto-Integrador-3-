@@ -20,7 +20,7 @@
                 <input type="text" name="fullName" id="fullName" placeholder="Nome Completo" required>
                 <input type="tel" name="phone" id="phone" placeholder="Telefone" required>
                 <input type="email" name="email" id="email" placeholder="Email" required>
-
+            
                 <select name="userType" id="userType" required>
                     <option value="">Selecione o tipo de usuário</option>
                     <option value="Administrador">Administrador</option>
@@ -28,22 +28,26 @@
                     <option value="Gestor">Gestor</option>
                     <option value="UsuarioComum">Usuário Comum</option>
                 </select>
-
+            
                 <div id="registroEngenheiroContainer">
                     <label for="registroEngenheiro">Número de Registro:</label>
-                    <input type="text" id="registroEngenheiro">
+                    <input type="text" name="registroEngenheiro" id="registroEngenheiro">
                 </div>
                 
                 <div id="gestorPEPContainer">
                     <label for="politicamenteExposto">Politicamente Exposto?</label>
-                    <select id="politicamenteExposto">
+                    <select name="politicamenteExposto" id="politicamenteExposto">
                         <option value="Não">Não</option>
                         <option value="Sim">Sim</option>
                     </select>
                 </div>
-
+            
+                <!-- Ocultos opcionais -->
+                <input type="text" name="_honey" style="display:none">
+            
                 <button type="submit">Registrar</button>
             </form>
+            
             <p class="signup-link">Já tem uma conta? <a href="login.html">Faça login</a></p>
         </div>
     </div>

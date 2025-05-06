@@ -4,13 +4,13 @@ import jwt
 import mysql.connector
 from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta, timezone
 import traceback
 import json  # Adicione esta linha
 from openpyxl import load_workbook
 from werkzeug.utils import secure_filename  # Adicione esta linha
 app = Flask(__name__, static_folder='FRONT/html', static_url_path='/FRONT/html')
-CORS(app, resources={r"/*": {"origins": ["*", "http://localhost:5501"]}}, methods=["GET", "POST", "PUT", "DELETE"])
-
+CORS(app) 
 secretKey = 'suaChaveSecretaAqui'  # Troque por uma chave mais forte
 
 # Configuração do diretório de upload
@@ -23,6 +23,39 @@ db_config = {
     'password': os.getenv('DB_PASSWORD', 'De182246@'),  # Melhor usar variável de ambiente
     'database': 'gestaopublicadigital'
 }
+
+@app.route('/api/obterNomeCompleto', methods=['GET'])
+def obter_nome_completo():
+    token = request.headers.get('Authorization')
+    if not token or not token.startswith('Bearer '):
+        return jsonify({'error': 'Token não fornecido ou inválido'}), 401
+
+    token = token.split(' ')[1]
+    try:
+        payload = jwt.decode(token, secretKey, algorithms=['HS256'])
+        user_id = payload.get('id')
+        if not user_id:
+            return jsonify({'error': 'ID de usuário não encontrado no token'}), 401
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT NomeCompleto FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if user:
+            return jsonify({'NomeCompleto': user['NomeCompleto']})
+        else:
+            return jsonify({'error': 'Usuário não encontrado'}), 404
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'Token expirado'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Token inválido'}), 401
+    except Exception as e:
+        print(f"Erro ao obter nome completo: {e}")
+        return jsonify({'error': 'Erro interno do servidor'}), 500
 
 @app.route('/obras-dados')
 def get_obras_dados():
@@ -90,30 +123,84 @@ def get_db_connection():
 #  Rota de login
 @app.route('/login', methods=['POST'])
 def login():
+    print(">>> Rota /login acessada")
     try:
+        print(">>> Tentando obter dados JSON")
         data = request.get_json()
+        print(f">>> Dados recebidos: {data}")
         email = data.get('Email')
         senha = data.get('Senha')
+        print(f">>> Email: {email}, Senha: {senha}")
 
+        print(">>> Tentando conectar ao banco de dados")
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
+        print(">>> Conexão ao banco de dados bem-sucedida")
 
-        cursor.execute('SELECT * FROM users WHERE Email = %s AND Senha = %s', (email, senha))
+        print(">>> Executando a consulta SQL")
+        cursor.execute('''
+            SELECT u.*, t.tipo AS TipoDeUsuario
+            FROM users u
+            JOIN tipousuario t ON u.TipoUsuarioId = t.id
+            WHERE u.Email = %s AND u.Senha = %s
+        ''', (email, senha))
         user = cursor.fetchone()
+        print(f">>> Resultado da consulta: {user}")
 
         cursor.close()
         db.close()
+        print(">>> Conexão ao banco de dados fechada")
 
         if user:
-            token = jwt.encode({'id': user['id'], 'exp': datetime.utcnow() + timedelta(hours=1)}, secretKey, algorithm='HS256')
-            return jsonify({'success': True, 'message': 'Login realizado com sucesso!', 'token': token, 'NomeCompleto': user['NomeCompleto']})
+            print(">>> Usuário encontrado, criando payload JWT")
+            payload = {
+                'id': user['id'],
+                'exp': datetime.now(timezone.utc) + timedelta(hours=1),
+                'user_type': user['TipoDeUsuario']
+            }
+            token = jwt.encode(payload, secretKey, algorithm='HS256')
+            print(f">>> Token JWT criado: {token}")
+            print(">>> Retornando resposta de sucesso")
+            return jsonify({
+                'success': True,
+                'message': 'Login realizado com sucesso!',
+                'token': token,
+                'NomeCompleto': user['NomeCompleto'],
+                'TipoDeUsuario': user['TipoDeUsuario']
+            })
         else:
+            print(">>> Usuário não encontrado, retornando erro de credenciais")
             return jsonify({'success': False, 'message': 'Credenciais inválidas.'}), 401
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f">>> OCORREU UM ERRO: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500 # Garanta que o erro seja retornado como JSON
 
 import hashlib
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith('Bearer '):
+            return jsonify({'message': 'Token não fornecido!'}), 401
+        try:
+            token = token.split(' ')[1]
+            data = jwt.decode(token, secretKey, algorithms=['HS256'])
+            current_user_type = data['user_type']
+        except:
+            return jsonify({'message': 'Token inválido!'}), 401
+        return f(current_user_type, *args, **kwargs)
+    return decorated
+
+def admin_gestor_engenheiro_required(f):
+    @wraps(f)
+    def decorated(user_type, *args, **kwargs):
+        if user_type.lower() not in ['administrador', 'gestor', 'engenheiro']:
+            return jsonify({'message': 'Permissão negada!'}), 403
+        return f(user_type, *args, **kwargs)
+    return decorated 
 
 #  Rota para obter opções de cadastro da obra
 @app.route('/cadastrar-obra', methods=['GET'])
@@ -633,6 +720,5 @@ def verificar_cadastro_obra():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-#  Iniciar servidor
 if __name__ == '__main__':
-    app.run(port=5500, debug=True)
+    app.run(debug=True, port=5500) # Certifique-se de que debug=True está aqui

@@ -13,16 +13,16 @@
         <div class="login-box">
             <img src="../assets/images/logo-user-tela_login.png" alt="Logo de Usuário">
             <h2>Login</h2>
-            <form id="loginForm">
+            <form id="login-form">
                 <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Senha" required>
+                <input type="password" id="senha" placeholder="Senha" required>
                 
                 <!-- Checkbox para mostrar senha -->
                 <div class="show-password">
                     <input type="checkbox" id="showPassword">
                     <label for="showPassword">Mostrar senha</label>
                 </div>
-                <button type="submit">Entrar</button>
+                <button id="botao-login" type="submit">Entrar</button>
             </form>
             <p class="signup-link">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
             <!-- Link de "Esqueci a senha" movido para baixo -->
@@ -30,7 +30,7 @@
             <div id="error-message"></div>
         </div>
     </div>
-    <script src="../js/script2.js"></script>
+    <script src="../js/scriptLogin.js"></script>
     <script src="../js/scriptSenha.js"></script>
     <script type="module" src="../js/scriptbd.js"></script>
 </body>

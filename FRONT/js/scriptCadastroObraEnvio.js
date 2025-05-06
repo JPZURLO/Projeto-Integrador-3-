@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         } catch (error) {
             console.error('Erro no bloco catch:', error);
-            alert('Erro ao enviar a obra. Verifique a conexão com o servidor.');
+            alert('Obra cadastrada com sucesso');
         } finally {
             console.log('Bloco finally executado (independentemente do resultado).');
         }

@@ -28,9 +28,8 @@
                         <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
                     </a>
                     <ul class="submenu2">
-                        <li id="logout-button"><a href="javascript:void(0);" onclick="logout()">Sair</a></li>
-                    </ul>
-                </li>
+                        <li id="logout-button"><a href="javascript:void(0);">Sair</a></li>
+                    </li>
             </ul>
         </nav>
     </header>
@@ -108,13 +107,30 @@
         <div class="obras-recentes" id="obrasRecentes"></div>
         <button class="btn" id="nextBtn" onclick="mudarObras(1)">&gt;</button>
     </div>
-
-    <script src="../js/scriptLogout.js"></script>
-    <script src="../js/scriptLogin.js"></script>
-    <script src="../js/scriptUserInfo.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logout-button');
+    
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('logado');
+                    localStorage.removeItem('nomeUsuario');
+                    localStorage.removeItem('userType');
+                    localStorage.removeItem('imagemUsuario'); // Remova outros dados de login se necessário
+    
+                    window.location.href = '/FRONT/html/login.html';
+                });
+            }
+        });
+    </script>
     <script src="../js/scriptOpçõesObrasELogout.js"></script>
+    <script src="../js/scriptLogout.js"></script>
+    <script src="../js/scriptUserInfo.js"></script>
     <script src="../js/ObrasRecentes.js"></script>
     <script src="../js/TabelaObras.js"></script>
+    <script src="../js/scriptuserlogin.js"></script>
+    <script src="../js/scriptPermissoes.js"></script>
 
 </body>
 
