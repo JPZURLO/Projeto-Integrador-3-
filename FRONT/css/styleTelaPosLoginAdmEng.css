@@ -326,3 +326,87 @@ cursor: default;
 .imagem-ativa {
   opacity: 1; /* Visível */
 }
+
+.notification-image {
+    width: 40px; /* Ajuste o tamanho conforme necessário */
+    height: 40px; /* Ajuste o tamanho conforme necessário */
+    vertical-align: middle; /* Alinha verticalmente com o texto ou outros elementos */
+    cursor: pointer; /* Mantém o cursor de clique */
+}
+
+.notification-icon {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+    cursor: pointer;
+    line-height: 1; /* Ajuste a altura da linha para alinhar verticalmente o ícone e o badge */
+}
+
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 8px;
+    font-size: 0.8em;
+}
+
+        .notifications-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        .notifications-modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background-color: #f9f9f9;
+            font-weight: bold;
+        }
+
+        .no-notifications {
+            padding: 10px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+        }

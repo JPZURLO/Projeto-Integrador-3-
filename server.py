@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 import traceback
 import json  # Adicione esta linha
 from openpyxl import load_workbook
+from functools import wraps  # Import the wraps decorator
 from werkzeug.utils import secure_filename  # Adicione esta linha
 app = Flask(__name__, static_folder='FRONT/html', static_url_path='/FRONT/html')
 CORS(app) 
@@ -16,6 +17,9 @@ secretKey = 'suaChaveSecretaAqui'  # Troque por uma chave mais forte
 # Configuração do diretório de upload
 app.config['UPLOAD_FOLDER'] = 'uploads' # Adicione esta linha
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ['png', 'jpg', 'jpeg', 'gif']
+
 # Configuração do banco de dados
 db_config = {
     'host': 'localhost',
@@ -23,6 +27,68 @@ db_config = {
     'password': os.getenv('DB_PASSWORD', 'De182246@'),  # Melhor usar variável de ambiente
     'database': 'gestaopublicadigital'
 }
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith('Bearer '):
+            return jsonify({'message': 'Token não fornecido!'}), 401
+        try:
+            token = token.split(' ')[1]
+            data = jwt.decode(token, secretKey, algorithms=['HS256'])
+            # Você pode adicionar informações do usuário ao contexto se necessário
+            return f(*args, **kwargs)
+        except:
+            return jsonify({'message': 'Token inválido!'}), 401
+    return decorated
+
+@app.route('/api/notifications', methods=['GET'])
+@token_required
+def get_notifications():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        now = datetime.now().date()
+        five_days_later = now + timedelta(days=5)
+
+        notifications = []
+
+        # Notificações de obras com data final próxima (5 dias)
+        cursor.execute("""
+            SELECT NomeDaObra, DataDeEntrega
+            FROM obras
+            WHERE DataDeEntrega <= %s AND DataDeEntrega >= %s
+        """, (five_days_later, now))
+        obras_terminando = cursor.fetchall()
+        for obra in obras_terminando:
+            notifications.append({
+                'type': 'deadline',
+                'message': f'A obra "{obra["NomeDaObra"]}" está terminando em {obra["DataDeEntrega"].strftime("%d/%m/%Y")}.'
+            })
+
+        # Notificações de novas obras cadastradas (exemplo: últimas 5 obras)
+        cursor.execute("""
+            SELECT NomeDaObra, DataDeInicio
+            FROM obras
+            ORDER BY id DESC
+            LIMIT 5
+        """)
+        novas_obras = cursor.fetchall()
+        for obra in novas_obras:
+            notifications.append({
+                'type': 'new_obra',
+                'message': f'Nova obra cadastrada: "{obra["NomeDaObra"]}" em {obra["DataDeInicio"].strftime("%d/%m/%Y")}.'
+            })
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({'notifications': notifications})
+
+    except Exception as e:
+        print(f"Erro ao buscar notificações: {e}")
+        return jsonify({'error': 'Erro ao buscar notificações'}), 500
 
 @app.route('/api/obterNomeCompleto', methods=['GET'])
 def obter_nome_completo():
@@ -203,8 +269,10 @@ def admin_gestor_engenheiro_required(f):
     return decorated 
 
 #  Rota para obter opções de cadastro da obra
+# Rota para obter opções de cadastro da obra
 @app.route('/cadastrar-obra', methods=['GET'])
 def cadastrar_obra():
+    """Rota para buscar os dados de regiões, classificações, status e estados."""
     try:
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
@@ -220,22 +288,56 @@ def cadastrar_obra():
         # Buscar status da obra
         cursor.execute('SELECT DISTINCT id, Classificacao FROM statusdaobra')
         status = cursor.fetchall()
+        
+        # Buscar estados
+        cursor.execute('SELECT id, nome FROM estados')
+        estados = cursor.fetchall()
+        
+        # Buscar cidades de todos os estados
+        cursor.execute('SELECT id, nome, estado_id FROM cidades')
+        cidades = cursor.fetchall()
 
         cursor.close()
         db.close()
 
+        # Organizar cidades por estado
+        cidades_por_estado = {}
+        for cidade in cidades:
+            estado_id = cidade['estado_id']
+            if estado_id not in cidades_por_estado:
+                cidades_por_estado[estado_id] = []
+            cidades_por_estado[estado_id].append({'id': cidade['id'], 'nome': cidade['nome']})
+
         return jsonify({
             'regioes': regioes,
             'classificacoes': classificacoes,
-            'status': status
+            'status': status,
+            'estados': estados,
+            'cidades': cidades_por_estado # Retorna um dicionário de cidades por estado
         })
     except Exception as e:
+        print(f"Erro em /cadastrar-obra: {e}")
         return jsonify({'error': str(e)}), 500
 
-imagens_hash = set()  # Inicializa o conjunto fora da função
+@app.route('/obter-cidades/<int:estado_id>', methods=['GET'])
+@token_required
+def obter_cidades(current_user_type, estado_id):
+    """Rota para buscar as cidades de um estado específico."""
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT id, nome FROM cidades WHERE estado_id = %s ORDER BY nome', (estado_id,))
+        cidades = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify({'cidades': cidades})
+    except Exception as e:
+        print(f"Erro em /obter-cidades/{estado_id}: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/adicionar-obra', methods=['POST'])
 def adicionar_obra():
+    """Rota para adicionar uma nova obra ao banco de dados."""
     print("Início da função adicionar_obra")
     try:
         print("Dentro do bloco try")
@@ -244,27 +346,42 @@ def adicionar_obra():
 
         nome_da_obra = request.form.get('NomeDaObra')
         regiao_nome = request.form.get('Regiao')
+        estado_id = request.form.get('Estado')  # Recebe o ID do estado
+        cidade_id = request.form.get('Cidade')  # Recebe o ID da cidade
         classificacao_nome = request.form.get('ClassificacaoDaObra')
         status_nome = request.form.get('Status')
-        data_inicio = request.form.get('DataDeInicio')  # Correção aqui
-        data_termino = request.form.get('DataDeEntrega')  # Correção aqui
+        data_inicio = request.form.get('DataDeInicio')
+        data_termino = request.form.get('DataDeEntrega')
         orcamento_utilizado = request.form.get('orcamento')
         descricao = request.form.get('Descricao')
         engenheiro_responsavel = request.form.get('EngResponsavel')
 
-        # Transformação do orçamento
-        orcamento_utilizado = orcamento_utilizado.replace('.', '')
-        orcamento_utilizado = orcamento_utilizado.replace(',', '.')
+        # Validação dos dados recebidos
+        if not all([nome_da_obra, regiao_nome, estado_id, cidade_id, classificacao_nome, status_nome, data_inicio, data_termino, orcamento_utilizado, descricao, engenheiro_responsavel]):
+            return jsonify({'error': 'Todos os campos são obrigatórios!'}), 400
 
-        # Garantir que o valor do orçamento seja um número válido
+        # Validação do orçamento
+        orcamento_utilizado = orcamento_utilizado.replace('.', '').replace(',', '.')
         try:
             orcamento_utilizado = float(orcamento_utilizado)
         except ValueError:
-            raise ValueError("O valor do orçamento é inválido!")
+            return jsonify({'error': 'O valor do orçamento é inválido!'}), 400
+
+        # Validação das datas
+        try:
+            data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            data_termino_obj = datetime.strptime(data_termino, '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'error': 'Formato de data inválido. Use o formato AAAA-MM-DD'}), 400
+
+        if data_termino_obj < data_inicio_obj:
+            return jsonify({'error': 'A data de término não pode ser anterior à data de início.'}), 400
 
         print("Valores dos campos:")
         print(f"Nome da obra: {nome_da_obra}")
         print(f"Região: {regiao_nome}")
+        print(f"Estado: {estado_id}")
+        print(f"Cidade: {cidade_id}")
         print(f"Classificação: {classificacao_nome}")
         print(f"Status: {status_nome}")
         print(f"Data de início: {data_inicio}")
@@ -275,74 +392,80 @@ def adicionar_obra():
 
         imagens = request.files.getlist('imagem')
         imagem_paths = []
-        imagens_hash_existente = set() # Vamos usar um novo conjunto para verificar duplicidades nesta requisição
+        imagens_hash_existente = set()  # Conjunto para verificar imagens duplicadas no request
 
         for imagem in imagens:
-            if imagem:
+            if imagem and allowed_file(imagem.filename):
+                # Calcula o hash da imagem para verificar duplicatas
+                imagem_hash = hashlib.md5(imagem.read()).hexdigest()
+                if imagem_hash in imagens_hash_existente:
+                    return jsonify({'error': 'Uma ou mais imagens enviadas são duplicadas nesta requisição.'}), 400
+                imagens_hash_existente.add(imagem_hash)  # Adiciona ao conjunto de hashes da requisição
+                imagem.seek(0)  # Reseta o ponteiro do arquivo para salvar a imagem
                 filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{imagem.filename}"
                 imagem_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 imagem.save(imagem_path)
                 imagem_paths.append(f"/uploads/{filename}")
+            elif imagem:
+                return jsonify({'error': 'Tipo de arquivo não permitido para a imagem'}), 400
 
-        if imagens_hash_existente:
-            return jsonify({'error': 'Uma ou mais imagens já foram cadastradas anteriormente.'}), 400
+        db = None
+        cursor = None
+        try:
+            db = get_db_connection()
+            cursor = db.cursor()
 
-        data_inicio_obj = None
-        if data_inicio:
-            try:
-                data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
-            except ValueError:
-                return jsonify({'error': 'Formato de data de início inválido'}), 400
+            # Buscar IDs de FKs (estado, cidade, regiao, classificacao, status)
+            cursor.execute("SELECT id FROM regioesbrasil WHERE id = %s", (regiao_nome,))
+            regiao_id = cursor.fetchone()
+            if not regiao_id:
+                return jsonify({'error': 'Região não encontrada'}), 400
+            regiao_id = regiao_id[0]
 
-        data_termino_obj = None
-        if data_termino:
-            try:
-                data_termino_obj = datetime.strptime(data_termino, '%Y-%m-%d').date()
-            except ValueError:
-                return jsonify({'error': 'Formato de data de término inválido'}), 400
+            cursor.execute("SELECT id FROM classificacaodasobras WHERE id = %s", (classificacao_nome,))
+            classificacao_id = cursor.fetchone()
+            if not classificacao_id:
+                return jsonify({'error': 'Classificação da obra não encontrada'}), 400
+            classificacao_id = classificacao_id[0]
 
-        if data_inicio_obj and data_termino_obj and data_termino_obj < data_inicio_obj:
-            return jsonify({'error': 'A data de término não pode ser anterior à data de início.'}), 400
+            cursor.execute("SELECT id FROM statusdaobra WHERE id = %s", (status_nome,))
+            status_id = cursor.fetchone()
+            if not status_id:
+                return jsonify({'error': 'Status não encontrado'}), 400
+            status_id = status_id[0]
 
-        db = get_db_connection()
-        cursor = db.cursor()
+            # Verificar se o estado e cidade existem
+            cursor.execute("SELECT id FROM estados WHERE id = %s", (estado_id,))
+            estado_existe = cursor.fetchone()
+            if not estado_existe:
+                return jsonify({'error': 'Estado não encontrado'}), 400
 
-        print(f"Buscando ID da região: {regiao_nome}")
-        cursor.execute("SELECT id FROM regioesbrasil WHERE id = %s", (regiao_nome,))
-        regiao_id = cursor.fetchone()
-        if not regiao_id:
-            print(f"Região não encontrada: {regiao_nome}")
-            return jsonify({'error': 'Região não encontrada'}), 400
-        regiao_id = regiao_id[0]
-        print(f"ID da região encontrado: {regiao_id}")
+            cursor.execute("SELECT id FROM cidades WHERE id = %s", (cidade_id,))
+            cidade_existe = cursor.fetchone()
+            if not cidade_existe:
+                return jsonify({'error': 'Cidade não encontrada'}), 400
 
-        print(f"Buscando ID da classificação: {classificacao_nome}")
-        cursor.execute("SELECT id FROM classificacaodasobras WHERE id = %s", (classificacao_nome,))
-        classificacao_id = cursor.fetchone()
-        if not classificacao_id:
-            print(f"Classificação não encontrada: {classificacao_nome}")
-            return jsonify({'error': 'Classificação da obra não encontrada'}), 400
-        classificacao_id = classificacao_id[0]
-        print(f"ID da classificação encontrado: {classificacao_id}")
+            import json
+            cursor.execute("""
+                INSERT INTO obras (NomeDaObra, Regiao, estado_id, cidade_id, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Imagens)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (nome_da_obra, regiao_id, estado_id, cidade_id, classificacao_id, status_id, data_inicio_obj, data_termino_obj, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
 
-        print(f"Buscando ID do status: {status_nome}")
-        cursor.execute("SELECT id FROM statusdaobra WHERE id = %s", (status_nome,))
-        status_id = cursor.fetchone()
-        if not status_id:
-            print(f"Status não encontrado: {status_nome}")
-            return jsonify({'error': 'Status não encontrado'}), 400
-        status_id = status_id[0]
-        print(f"ID do status encontrado: {status_id}")
+            db.commit()
 
-        import json
-        cursor.execute("""
-            INSERT INTO obras (NomeDaObra, Regiao, ClassificacaoDaObra, Status, DataDeInicio, DataDeEntrega, Orcamento, EngResponsavel, DescricaoDaObra, Imagens)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (nome_da_obra, regiao_id, classificacao_id, status_id, data_inicio_obj, data_termino_obj, orcamento_utilizado, engenheiro_responsavel, descricao, json.dumps(imagem_paths)))
-
-        db.commit()
-        cursor.close()
-        db.close()
+            return jsonify({
+                'success': True,
+                'message': 'Obra cadastrada com sucesso!',
+            }), 201
+        except Exception as e:
+            print("Erro ao adicionar obra:", str(e))
+            traceback.print_exc()  # Imprime o traceback completo no console
+            return jsonify({'error': str(e)}), 500
+        finally:
+            if cursor:
+                cursor.close()
+            if db:
+                db.close()
 
         return jsonify({
             'success': True,
@@ -350,9 +473,9 @@ def adicionar_obra():
         }), 201
     except Exception as e:
         print("Erro ao adicionar obra:", str(e))
-        traceback.print_exc()
+        traceback.print_exc()  # Imprime o traceback completo no console
         return jsonify({'error': str(e)}), 500
-
+    
 def obter_status_do_banco():
     try:
         conn = mysql.connector.connect(**db_config)

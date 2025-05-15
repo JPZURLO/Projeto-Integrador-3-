@@ -23,6 +23,10 @@
                     </ul>
                 </li>
                 <li><a href="Relatorios.html" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="notification-icon">
+                    <img src="../assets/images/icone-notificacao.png" alt="Notificações" class="notification-image">
+                    <span class="notification-badge" id="notification-count">0</span>
+                </li>
                 <li class="has-submenu2">
                     <a href="javascript:void(0);" id="user-name-link">
                         <span id="user-name">Nome do Usuário</span>
@@ -45,6 +49,14 @@
             <div class="campo">
                 <label for="data-final">Data Final:</label>
                 <input type="date" id="data-final" required>
+            </div>
+            <div class="filtro">
+                <label>Estado</label>
+                <select id="estado-obra"></select>
+            </div>
+            <div class="filtro">
+                <label>Cidade</label>
+                <select id="cidade-obra" disabled></select>
             </div>
             <div class="campo">
                 <label for="formato-relatorio">Escolha o formato do relatório:</label>

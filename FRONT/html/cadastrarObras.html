@@ -23,6 +23,10 @@
                     </ul>
                 </li>
                 <li><a href="Relatorios.html" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="notification-icon">
+                    <img src="../assets/images/icone-notificacao.png" alt="Notificações" class="notification-image">
+                    <span class="notification-badge" id="notification-count">0</span>
+                </li>
                 <li class="has-submenu2">
                     <a href="javascript:void(0);" id="user-name-link">
                         <span id="user-name">Nome do Usuário</span>
@@ -59,6 +63,18 @@
             <div class="form-group">
                 <label for="regiao">Região:</label>
                 <select id="regiao" name="Regiao" required></select>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="Estado" required>
+                    <option value="">Selecione o Estado</option>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="cidade">Cidade:</label>
+                <select id="cidade" name="Cidade" required disabled>
+                    <option value="">Selecione a Cidade</option>
+                    </select>
             </div>
         </div>
         <div class="form-row">
@@ -110,6 +126,7 @@
     <script src="../js/scriptOpçõesObrasELogout.js"></script>
     <script src="../js/scriptCadastroObraEnvio.js"></script>
     <script src="../js/scriptCarregamentodasOpçõesCadastroObra.js"></script>
+    <script src="../js/scriptNotificacao.js"></script>
 </body>
 
 </html>

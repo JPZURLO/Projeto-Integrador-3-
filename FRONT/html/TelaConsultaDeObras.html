@@ -23,6 +23,10 @@
                     </ul>
                 </li>
                 <li><a href="Relatorios.html" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="notification-icon">
+                    <img src="../assets/images/icone-notificacao.png" alt="Notificações" class="notification-image">
+                    <span class="notification-badge" id="notification-count">0</span>
+                </li>
                 <li class="has-submenu2">
                     <a href="javascript:void(0);" id="user-name-link">
                         <span id="user-name">Nome do Usuário</span>
@@ -52,6 +56,14 @@
             <div class="form-group">
                 <label for="regiao">Região:</label>
                 <select id="regiao" name="Regiao" disabled></select>
+            </div>
+            <div class="filtro">
+                <label>Estado</label>
+                <select id="estado-obra"></select>
+            </div>
+            <div class="filtro">
+                <label>Cidade</label>
+                <select id="cidade-obra" disabled></select>
             </div>
         </div>
         <div class="form-row">
@@ -90,6 +102,17 @@
             <label for="descricao">Descrição</label>
             <textarea id="descricao" name="Descricao" rows="5" readonly placeholder="Descrição detalhada da obra"></textarea>
         </div>
+
+       <div class="avaliacao-container">
+            <div class="comentarios-container">
+                <h3>Comentários:</h3>
+                <textarea id="comentario-input" placeholder="Digite seu comentário"></textarea>
+                <button id="comentar-button">Comentar</button>
+                <div id="comentarios-lista">
+                    </div>
+            </div>
+        </div>
+
         <div style="margin-top: 20px; text-align: center;">
             <button type="button" id="voltar-consulta">Voltar para Consulta</button>
         </div>
@@ -111,6 +134,7 @@
     <script src="../js/scriptOpçõesObrasELogout.js"></script>
     <script src="../js/scriptCarregamentodasOpçõesCadastroObra.js"></script>
     <script src="../js/scriptConsultaDeObras.js"></script>
+    <script src="../js/scriptComentarios.js"></script>
 </body>
 
 </html>

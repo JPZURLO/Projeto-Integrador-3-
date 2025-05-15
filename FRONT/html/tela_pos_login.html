@@ -23,16 +23,32 @@
                     </ul>
                 </li>
                 <li><a href="Relatorios.html" id="link-solucoes">RELATÓRIOS</a></li>
+                <li class="notification-icon">
+                    <img src="../assets/images/icone-notificacao.png" alt="Notificações" class="notification-image">
+                    <span class="notification-badge" id="notification-count">0</span>
+                </li>
                 <li class="has-submenu2">
                     <a href="javascript:void(0);" id="user-name-link">
                         <span id="user-name">Nome do Usuário</span> <!-- Nome do usuário -->
                     </a>
                     <ul class="submenu2">
-                        <li id="logout-button"><a href="javascript:void(0);">Sair</a></li>
-                    </li>
+                    <li id="logout-button"><a href="javascript:void(0);">Sair</a></li>
+                </li>
+                
             </ul>
         </nav>
     </header>
+
+    <div id="notifications-modal" class="notifications-modal">
+        <div class="notifications-modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Notificações</h3>
+            <div id="notifications-list">
+                <div class="no-notifications">Nenhuma notificação.</div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="square">
             <p>Bem-Vindo a <strong>GESTÃO PÚBLICA DIGITAL</strong></p>
@@ -131,6 +147,7 @@
     <script src="../js/TabelaObras.js"></script>
     <script src="../js/scriptuserlogin.js"></script>
     <script src="../js/scriptPermissoes.js"></script>
+    <script src="../js/scriptNotificacao.js"></script>
 
 </body>
 
